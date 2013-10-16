@@ -1,7 +1,6 @@
 var EzWebGameURL = "http://localhost/GameRound/";
-var gKey = "KlfQcRgxmNzzrjZRtH";
-var Key;
-
+var Key = '';
+var LocalLoginURL = "./login.php";
 function signup(name,account,password)
 {
 	$.ajax({
@@ -11,7 +10,12 @@ function signup(name,account,password)
 	});
 }
 
-function login(account,password)
+function login()
 {
-    window.open(EzWebGameURL+'member/login/'+gKey, '', 'width=500, height=350');
+    $.ajax({
+  		url: LocalLoginURL
+   	}).done(function(data) {
+  		console.log(data);
+        eval(data);
+    });
 }
