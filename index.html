@@ -2,10 +2,12 @@
 	<head>
 		<title>EzWebCheckers</title>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.7.2.min.js"></script>
 	</head>
 	<body>
-		<canvas id="myCanvas" width="200" height="100" style="border:1px solid #d3d3d3;">
+        <canvas id="myCanvas" width="578" height="200" style="border:1px solid #d3d3d3;">
 		Your browser does not support the HTML5 canvas tag.</canvas>
+        <div id="container"></div>
         <br />
         <input id="loginBtn" type="button" value="Login" onclick="login()"/>
         <input id="logoutBtn" type="button" value="Logout" onclick="logout()"/>
@@ -14,3 +16,4 @@
 </html>
 <script src="ezWebGame.js"></script>
 <script src="ezWebChecker.js"></script>
+<script src="canvas.js"></script>

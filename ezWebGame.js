@@ -28,6 +28,7 @@ function logout()
    	}).done(function(data) {
   		console.log(data);
         Key = '';
+        if(onLogout)onLogout();
     });
 }
 
@@ -43,5 +44,40 @@ function listRoomInfos()
         {
             onListRoomDone(data.Room);
         }
+    });
+}
+
+function createGameRoom(title,minPlayer,maxPlayer)
+{
+    $.ajax({
+  		url: EzWebGameURL + "Room/Create/" + title + "/" + minPlayer + "/" + maxPlayer + "/" + Key 
+   	}).done(function(data) {
+  		console.log(data);
+        data = JSON.parse(data);
+        Key = data.cKey;
+        if(data.Wrong)alert(data.Wrong);
+    });
+}
+
+function leaveGameRoom()
+{
+    $.ajax({
+  		url: EzWebGameURL + "Room/Leave/" + Key 
+   	}).done(function(data) {
+  		console.log(data);
+        data = JSON.parse(data);
+        Key = data.cKey;
+    });
+}
+
+function listRoomPlayers()
+{
+    $.ajax({
+  		url: EzWebGameURL + "Room/ListRoomPlayers/" + Key 
+   	}).done(function(data) {
+  		console.log(data);
+        data = JSON.parse(data);
+        Key = data.cKey;
+        if(data.Wrong)alert(data.Wrong);
     });
 }
