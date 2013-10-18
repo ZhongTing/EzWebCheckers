@@ -1,7 +1,6 @@
 function onLoginSuccess()
 {
-    $("#loginBtn").hide();
-    $("#logoutBtn").show();
+    turnToLobbyLayer();
     listRoomInfos();
 }
 function onLoginFail(errorMsg)
@@ -11,21 +10,10 @@ function onLoginFail(errorMsg)
 
 function onLogout()
 {
-    init();   
+    turnToLoginLayer();
 }
 
 function onListRoomDone(roomInfos)
 {
     console.log(JSON.stringify(roomInfos));
-}
-
-(function(){
-    init();
-})();
-
-//check local function
-function init()
-{
-    $("#loginBtn").show();
-    $("#logoutBtn").hide();
 }
