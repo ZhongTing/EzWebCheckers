@@ -37,7 +37,6 @@ function listRoomInfos()
     $.ajax({
   		url: EzWebGameURL + "Room/ListRoomInfos/"+Key
    	}).done(function(data) {
-  		console.log(data);
         data = JSON.parse(data);
         Key = data.cKey;
         if(onListRoomDone)
@@ -56,6 +55,7 @@ function createGameRoom(title,minPlayer,maxPlayer)
         data = JSON.parse(data);
         Key = data.cKey;
         if(data.Wrong)alert(data.Wrong);
+        else if(onRoomCreated)onRoomCreated(data.Room ,data.Player);
     });
 }
 
@@ -67,6 +67,8 @@ function leaveGameRoom()
   		console.log(data);
         data = JSON.parse(data);
         Key = data.cKey;
+        if(data.Wrong)alert(data.Wrong);
+        else if(onRoomLeaved)onRoomLeaved();
     });
 }
 
