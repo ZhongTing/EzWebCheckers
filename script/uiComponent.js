@@ -1,4 +1,4 @@
-function newButton(px,py,buttonText,labelFontSize)
+function newButton(px,py,buttonText,Width,labelFontSize)
 {
     if(!labelFontSize)labelFontSize=20;
     var label = new Kinetic.Label({
@@ -13,8 +13,7 @@ function newButton(px,py,buttonText,labelFontSize)
         shadowBlur: 0,
         shadowOffset: 5,
         shadowOpacity: 0.5,
-        width:100,
-        height:50
+        width:Width,
     }));
     label.add(new Kinetic.Text({
         text: buttonText,
@@ -22,8 +21,7 @@ function newButton(px,py,buttonText,labelFontSize)
         padding: 5,
         fill: 'white',
         align:'center',
-        width:100,
-        height:50
+        width:Width,
     }));
     label.on('mouseover',function(){
         this.getTag().setFill('rgb(100,100,100)');
@@ -43,11 +41,27 @@ function newText(px,py,Text,FontSize)
         y: py,
         text: Text,
         fontSize: FontSize,
-        fill: 'green'
+        fill: 'rgb(60,60,60)'
       });
     return simpleText;
 }
- 
+function newImage(X,Y,Width,Height,Src)
+{
+    var imageObj = new Image();
+    var image;
+    imageObj.onload = function() {
+            image = new Kinetic.Image({
+            x: X,
+            y: Y,
+            image: imageObj,
+            width: Width,
+            height: Height
+        });
+    }
+    imageObj.src = Src;
+    return image;
+}
+
 function getBackgroundLayer()
 {
     var layer = new Kinetic.Layer();

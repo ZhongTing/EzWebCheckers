@@ -55,7 +55,7 @@ function createGameRoom(title,minPlayer,maxPlayer)
         data = JSON.parse(data);
         Key = data.cKey;
         if(data.Wrong)alert(data.Wrong);
-        else if(onRoomCreated)onRoomCreated(data.Room ,data.Player);
+        else if(onRoomCreated)onRoomCreated(data.Room[0] ,data.Player);
     });
 }
 
