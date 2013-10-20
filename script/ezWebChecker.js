@@ -57,7 +57,7 @@ var EzWebEvent = (function(){
 
 function c_createGameRoom()
 {
-    var title = prompt('enter room title','Come In');
+    var title = prompt('enter room title','Welcome');
     var maxPlayer = prompt('enter maxPlayer','3');
     if(isNaN(maxPlayer))maxPlayer=3;
     EzWebGame.createGameRoom(title,2,maxPlayer);
