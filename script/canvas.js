@@ -45,13 +45,13 @@ function refreshPlayersInRoomInfoLayer(players)
 }
 function refreshLobbyRooms(roomInfos)
 {
-    var x = 100,y=100,width=400,height=100;
+    var x = 100,y=100,width=400,height=50;
     if(lobbyRoomsLayer)stage.removeChildren(lobbyRoomsLayer);
     lobbyRoomsLayer = new Kinetic.Layer();
     for(var i =0;i<roomInfos.length;i++)
     {
         newLobbyRoomZone(x,y,width,height,roomInfos[i],lobbyRoomsLayer);
-        y+=150;
+        y+=60;
     }
     stage.add(lobbyRoomsLayer);
 }

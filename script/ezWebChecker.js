@@ -33,6 +33,12 @@ var EzWebEvent = (function(){
         turnToLobbyLayer();
     }
     
+    function roomJoinedEvent(roomInfo)
+    {
+        turnToRoomLayer();
+        refreshRoomInfoLayer(roomInfo.Room);
+        refreshPlayersInRoomInfoLayer(roomInfo.Players);
+    }
     function getRoomInfoDoneEvent(data)
     {
         console.log("Event: " + data);
@@ -50,8 +56,8 @@ var EzWebEvent = (function(){
         
         // 房間中
         onRoomLeaved: leavedRoomEvent,
-        onRoomInfoReceived: getRoomInfoDoneEvent
-        
+        onRoomInfoReceived: getRoomInfoDoneEvent,
+        onRoomJoined: roomJoinedEvent
         // 遊戲中
     }
 })();
