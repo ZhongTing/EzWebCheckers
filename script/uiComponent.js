@@ -56,7 +56,7 @@ function newImage(X,Y,Width,Height,Src,layer)
 {
     var imageObj = new Image();
     imageObj.onload = function() {
-            var image = new Kinetic.Image({
+        var image = new Kinetic.Image({
             x: X,
             y: Y,
             image: imageObj,
@@ -64,9 +64,10 @@ function newImage(X,Y,Width,Height,Src,layer)
             height: Height
         });
         layer.add(image);
-        stage.add(layer);
+        layer.draw();
     }
     imageObj.src = Src;
+    return imageObj;
 }
 function newPlayerZone(X,Y,Width,Height,PlayerName,Src,layer)
 {
@@ -76,7 +77,7 @@ function newPlayerZone(X,Y,Width,Height,PlayerName,Src,layer)
         opacity: 0.75,
     });
     label.add(new Kinetic.Tag({
-        fill: 'black',
+        fill: 'white',
         lineJoin: 'round',
         shadowColor: 'black',
         shadowBlur: 0,
@@ -86,19 +87,5 @@ function newPlayerZone(X,Y,Width,Height,PlayerName,Src,layer)
         height:Height
     }));
     layer.add(label).add(newLabel(X,Y+Height,PlayerName,Width,20));
-    newImage(X,Y,Width,Width,Src,layer);
-}
-function getBackgroundLayer()
-{
-    var layer = new Kinetic.Layer();
-    layer.add(new Kinetic.Rect({
-        x: 0,
-        y: 0,
-        stroke: '#555',
-        strokeWidth: 5,
-        fill: '#ddd',
-        width: stage.getWidth(),
-        height: stage.getHeight(),
-    }));
-    return layer;
+    return newImage(X,Y,Width,Width,Src,layer);
 }
