@@ -93,7 +93,7 @@ var EzWebGame = (function(){
     {
         if(onEzWebEvent)
         {
-            console.log(onEzWebEvent.name + ": " + data);
+            console.log(onEzWebEvent.name + ": " + JSON.stringify(data));
             onEzWebEvent(data);
         }
         else
