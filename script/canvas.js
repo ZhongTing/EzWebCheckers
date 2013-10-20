@@ -10,7 +10,9 @@ var roomLayer;
 var roomInfoLayer;
 var gameLayer;
 
-turnToLoginLayer();
+//turnToLoginLayer();
+turnToRoomLayer();
+//turnToGameLayer();
 
 function turnToLoginLayer()
 {
@@ -37,8 +39,15 @@ function turnToLobbyLayer()
 function turnToRoomLayer()
 {
     roomLayer = new Kinetic.Layer();
-    var leaveRoomLabel = newButton(0,0,'Leave').on('click',function(){leaveGameRoom();});
-    roomLayer.add(leaveRoomLabel);
+    var leaveRoomLabel = newButton(0,100,'Leave',80).on('click',function(){leaveGameRoom();});
+    var startLabel = newButton(0,150,'Start',80).on('click',function(){alert('coming soon');});
+    roomLayer.add(leaveRoomLabel).add(startLabel);
+    
+    roomLayer.add(newLabel(0,10,'RoomTitle',stage.getWidth()-10,30));
+    roomLayer.add(newLabel(stage.getWidth()-210,60,'MaxPlayer:3',200,20));
+    newPlayerZone(100,150,150,150,'PlayerName','./red.jpg',roomLayer);
+    newPlayerZone(260,150,150,150,'PlayerName','./yellow.jpg',roomLayer);
+    newPlayerZone(420,150,150,150,'PlayerName','./green.jpg',roomLayer);
     stage.removeChildren('.layer');
     stage.add(getBackgroundLayer()).add(roomLayer);
 }
@@ -54,20 +63,8 @@ function refleshPlayersInRoomInfoLayer(player)
 }
 function turnToGameLayer()
 {
-    gameLayer = new Kinetic.Layer();    
-    var imageObj = new Image();
-    imageObj.onload = function() {
-        var chessboard = new Kinetic.Image({
-            x: 195,
-            y: 5,
-            image: imageObj,
-            width: 400,
-            height: 400
-        });
-        gameLayer.add(chessboard);
-        stage.add(gameLayer);
-    };
-    imageObj.src = './chess.jpg';
+    gameLayer = new Kinetic.Layer();
+    newImage(195,5,400,400,'./chess.jpg',gameLayer);
     stage.removeChildren('.layer');
     stage.add(getBackgroundLayer()).add(gameLayer);
 }
