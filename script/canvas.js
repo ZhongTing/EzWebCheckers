@@ -46,7 +46,8 @@ function refreshPlayersInRoomInfoLayer(players)
 function refreshLobbyRooms(roomInfos)
 {
     var x = 100,y=100,width=400,height=50;
-    if(lobbyRoomsLayer)stage.removeChildren(lobbyRoomsLayer);
+    //if(lobbyRoomsLayer)stage.removeChildren(lobbyRoomsLayer);
+    if(lobbyRoomsLayer)lobbyRoomsLayer.clear();
     lobbyRoomsLayer = new Kinetic.Layer();
     for(var i =0;i<roomInfos.length;i++)
     {

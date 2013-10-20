@@ -31,6 +31,7 @@ var EzWebEvent = (function(){
     function leavedRoomEvent()
     {
         turnToLobbyLayer();
+        EzWebGame.listRoomInfos();
     }
     
     function roomJoinedEvent(roomInfo)
