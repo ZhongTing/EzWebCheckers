@@ -67,7 +67,6 @@ function newImage(X,Y,Width,Height,Src,layer)
         layer.draw();
     }
     imageObj.src = Src;
-    return imageObj;
 }
 function newPlayerZone(X,Y,Width,Height,PlayerName,Src,layer)
 {
@@ -87,5 +86,33 @@ function newPlayerZone(X,Y,Width,Height,PlayerName,Src,layer)
         height:Height
     }));
     layer.add(label).add(newLabel(X,Y+Height,PlayerName,Width,20));
-    return newImage(X,Y,Width,Width,Src,layer);
+    newImage(X,Y,Width,Width,Src,layer);
+}
+function newLobbyRoomZone(X,Y,Width,Height,RoomInfo,layer)
+{
+    var labelFontSize = 20;
+    var label = new Kinetic.Label({
+        x: X,
+        y: Y,
+        opacity: 0.75,
+    });
+    label.add(new Kinetic.Tag({
+        fill: 'black',
+        lineJoin: 'round',
+        shadowColor: 'black',
+        shadowBlur: 0,
+        shadowOffset: 5,
+        shadowOpacity: 0.5,
+        width:Width,
+        height:Height
+    }));
+    label.add(new Kinetic.Text({
+        text: Text,
+        fontSize: RoomInfo.id,
+        padding: 5,
+        fill: 'white',
+        align:'center',
+        width:50,
+    }));
+    layer.add(label);
 }

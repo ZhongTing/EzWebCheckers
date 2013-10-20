@@ -11,6 +11,7 @@ var roomLayer = new Kinetic.Layer();
 var roomInfoLayer = new Kinetic.Layer();
 var roomPlayerLayer = new Kinetic.Layer();
 var gameLayer = new Kinetic.Layer();
+var lobbyRoomsLayer;
 
 //BcakgroundLayer
 backgroundLayer.add(new Kinetic.Rect({
@@ -32,9 +33,9 @@ registerLabel.on('click',function(){window.open('http://127.0.0.1/GameRound/Memb
 loginLayer.add(loginLabel).add(ezWebCheckerLabel).add(registerLabel);
 
 //LobbyLayer
-var logoutLabel = newButton(0,0,'logout').on('click',function(){EzWebGame.logout();});
-var refreshRoomListLabel = newButton(0,50,'refresh room list').on('click',function(){EzWebGame.listRoomInfos();});
-var createRoomLabel = newButton(0,100,'CreateRoom').on('click',function(){c_createGameRoom();});
+var logoutLabel = newButton(0,0,'logout',80).on('click',function(){EzWebGame.logout();});
+var refreshRoomListLabel = newButton(0,50,'refresh',80).on('click',function(){EzWebGame.listRoomInfos();});
+var createRoomLabel = newButton(0,100,'Create',80).on('click',function(){c_createGameRoom();});
 lobbyLayer.add(logoutLabel).add(refreshRoomListLabel).add(createRoomLabel);
 
 //RoomLayer

@@ -2,7 +2,7 @@ var EzWebEvent = (function(){
     function loginSuccessEvent()
     {
         turnToLobbyLayer();
-        listRoomInfos();
+        EzWebGame.listRoomInfos();
     }
     
     function loginFailEvent(errorMsg)
@@ -18,13 +18,14 @@ var EzWebEvent = (function(){
     function listRoomDoneEvent(roomInfos)
     {
         console.log(JSON.stringify(roomInfos));
+        refreshLobbyRooms(roomInfos);
     }
     
     function createdRoomEvent(roomInfo)
     {
         turnToRoomLayer();
-        refleshRoomInfoLayer(roomInfo.Room);
-        refleshPlayersInRoomInfoLayer(roomInfo.Players);
+        refreshRoomInfoLayer(roomInfo.Room);
+        refreshPlayersInRoomInfoLayer(roomInfo.Players);
     }
     
     function leavedRoomEvent()

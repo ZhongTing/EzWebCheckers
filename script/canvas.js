@@ -22,13 +22,18 @@ function turnToRoomLayer()
     initLayer();
     roomLayer.show().draw();
 }
-function refleshRoomInfoLayer(room)
+function turnToGameLayer()
+{
+    initLayer();
+    gameLayer.show().draw();
+}
+function refreshRoomInfoLayer(room)
 {
     roomInfoLayer.add(newLabel(0,10,room.title,stage.getWidth()-10,30));
     roomInfoLayer.add(newLabel(stage.getWidth()-210,60,'MaxPlayer: '+room.max,200,20));
     roomInfoLayer.show().draw();
 }
-function refleshPlayersInRoomInfoLayer(players)
+function refreshPlayersInRoomInfoLayer(players)
 {
     var posX = [100,260,420];
     var pics = ['./red.jpg','./yellow.jpg','green.jpg'];
@@ -38,8 +43,15 @@ function refleshPlayersInRoomInfoLayer(players)
     }
     roomPlayerLayer.show().draw();
 }
-function turnToGameLayer()
+function refreshLobbyRooms(roomInfos)
 {
-    initLayer();
-    gameLayer.show().draw();
+    var x = 100,y=100,width=400,height=100;
+    if(lobbyRoomsLayer)stage.removeChildren(lobbyRoomsLayer);
+    lobbyRoomsLayer = new Kinetic.Layer();
+    for(var i =0;i<roomInfos.length;i++)
+    {
+        newLobbyRoomZone(x,y,width,height,roomInfos[i],lobbyRoomsLayer);
+        y+=150;
+    }
+    stage.add(lobbyRoomsLayer);
 }
