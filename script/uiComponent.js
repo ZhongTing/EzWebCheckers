@@ -67,7 +67,6 @@ function newImage(X,Y,Width,Height,Src,layer)
         layer.draw();
     }
     imageObj.src = Src;
-    return imageObj;
 }
 function newPlayerZone(X,Y,Width,Height,PlayerName,Src,layer)
 {
@@ -87,5 +86,57 @@ function newPlayerZone(X,Y,Width,Height,PlayerName,Src,layer)
         height:Height
     }));
     layer.add(label).add(newLabel(X,Y+Height,PlayerName,Width,20));
-    return newImage(X,Y,Width,Width,Src,layer);
+    newImage(X,Y,Width,Width,Src,layer);
+}
+function newLobbyRoomZone(X,Y,Width,Height,RoomInfo,layer)
+{
+    var labelFontSize = 30;
+    var group = new Kinetic.Group({
+        x: X,
+        y: Y
+    });
+    var tag = new Kinetic.Tag({
+        fill: 'black',
+        lineJoin: 'round',
+        shadowColor: 'black',
+        shadowBlur: 0,
+        shadowOffset: 5,
+        shadowOpacity: 0.5,
+        width:Width,
+        height:Height
+    });
+    group.add(tag);
+    group.add(new Kinetic.Text({
+        text: RoomInfo.title,
+        fontSize: labelFontSize,
+        fill: 'white',
+        align:'center',
+        width:Width,
+        y:(Height-labelFontSize)/2
+    }));
+    group.add(new Kinetic.Text({
+        text: RoomInfo.id,
+        fontSize: labelFontSize,
+        fill: 'white',
+        x:15,
+        y:(Height-labelFontSize)/2
+    }));
+    group.add(new Kinetic.Text({
+        text: RoomInfo.now+'/'+RoomInfo.max,
+        fontSize: labelFontSize,
+        fill: 'white',
+        align:'left',
+        x:Width-70,
+        y:(Height-labelFontSize)/2
+    }));
+    group.on('mouseover',function(){
+        tag.setFill('rgb(100,100,100)');
+        this.getLayer().draw();
+    })
+    group.on('mouseout',function(){
+        tag.setFill('black');
+        this.getLayer().draw();
+    })
+    group.on('click',function(){EzWebGame.joinGameRoom(RoomInfo.id)});
+    layer.add(group);
 }

@@ -64,6 +64,19 @@ var EzWebGame = (function(){
         });
     }
     
+    function joinRoom(roomId)
+    {
+        $.ajax({
+      		url: EzWebGameURL + "Room/join/" +roomId+'/'+ Key 
+       	}).done(function(data) {
+      		console.log(data);
+            data = JSON.parse(data);
+            Key = data.cKey;
+            if(data.Wrong)alert(data.Wrong);
+            else EzWebEventCalls(EzWebEvent.onRoomJoined,{"Room":data.Room[0], "Players":data.Player});
+        });
+    }
+    
     function listRoomPlayers()
     {
         $.ajax({
@@ -115,8 +128,8 @@ var EzWebGame = (function(){
         
         // Room
         createGameRoom: createRoom,
-        leaveGameRoom: leaveRoom
-        
+        leaveGameRoom: leaveRoom,
+        joinGameRoom: joinRoom
         // Exec
     }
 })();

@@ -2,7 +2,7 @@ var EzWebEvent = (function(){
     function loginSuccessEvent()
     {
         turnToLobbyLayer();
-        listRoomInfos();
+        EzWebGame.listRoomInfos();
     }
     
     function loginFailEvent(errorMsg)
@@ -18,20 +18,28 @@ var EzWebEvent = (function(){
     function listRoomDoneEvent(roomInfos)
     {
         console.log(JSON.stringify(roomInfos));
+        refreshLobbyRooms(roomInfos);
     }
     
-    function createdRoomEvent(room, player)
+    function createdRoomEvent(roomInfo)
     {
         turnToRoomLayer();
-        refleshRoomInfoLayer(room);
-        refleshPlayersInRoomInfoLayer(player);
+        refreshRoomInfoLayer(roomInfo.Room);
+        refreshPlayersInRoomInfoLayer(roomInfo.Players);
     }
     
     function leavedRoomEvent()
     {
         turnToLobbyLayer();
+        EzWebGame.listRoomInfos();
     }
     
+    function roomJoinedEvent(roomInfo)
+    {
+        turnToRoomLayer();
+        refreshRoomInfoLayer(roomInfo.Room);
+        refreshPlayersInRoomInfoLayer(roomInfo.Players);
+    }
     function getRoomInfoDoneEvent(data)
     {
         console.log("Event: " + data);
@@ -49,8 +57,8 @@ var EzWebEvent = (function(){
         
         // 房間中
         onRoomLeaved: leavedRoomEvent,
-        onRoomInfoReceived: getRoomInfoDoneEvent
-        
+        onRoomInfoReceived: getRoomInfoDoneEvent,
+        onRoomJoined: roomJoinedEvent
         // 遊戲中
     }
 })();
