@@ -20,11 +20,11 @@ var EzWebEvent = (function(){
         console.log(JSON.stringify(roomInfos));
     }
     
-    function createdRoomEvent(room, player)
+    function createdRoomEvent(roomInfo)
     {
         turnToRoomLayer();
-        refleshRoomInfoLayer(room);
-        refleshPlayersInRoomInfoLayer(player);
+        refleshRoomInfoLayer(roomInfo.Room);
+        refleshPlayersInRoomInfoLayer(roomInfo.Players);
     }
     
     function leavedRoomEvent()
