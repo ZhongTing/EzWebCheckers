@@ -38,11 +38,14 @@ function refreshPlayersInRoomInfoLayer(players)
 {
     var posX = [100,260,420];
     var pics = ['./red.jpg','./yellow.jpg','green.jpg'];
+    if(roomPlayerLayer)roomPlayerLayer.clear();
+    roomPlayerLayer = new Kinetic.Layer();
     for(var i=0; i < players.length; i++)
     {
         newPlayerZone(posX[i],150,150,150,players[i].userName,pics[i],roomPlayerLayer);
     }
-    roomPlayerLayer.show().draw();
+    //roomPlayerLayer.show().draw();
+    stage.add(roomPlayerLayer);
 }
 function refreshLobbyRooms(roomInfos)
 {
