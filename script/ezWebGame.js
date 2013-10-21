@@ -46,7 +46,7 @@ var EzWebGame = (function(){
             if(data.Wrong)alert(data.Wrong);
             else
             {
-				event();
+				openRequest();
                 var object = new Array();
                 EzWebEventCalls(EzWebEvent.onRoomCreated, {"Room":data.Room[0], "Players":data.Player});
             }
@@ -64,7 +64,7 @@ var EzWebGame = (function(){
             if(data.Wrong)alert(data.Wrong);
             else
 			{
-				request = false;
+				closeRequest();
 				EzWebEventCalls(EzWebEvent.onRoomLeaved);
 			}
         });
@@ -81,7 +81,7 @@ var EzWebGame = (function(){
             if(data.Wrong)alert(data.Wrong);
             else
 			{
-				event();
+				openRequest();
 				EzWebEventCalls(EzWebEvent.onRoomJoined,{"Room":data.Room[0], "Players":data.Player});
 			}
         });
@@ -112,11 +112,13 @@ var EzWebGame = (function(){
         }
     }
     
-	function event()
+	function openRequest()
 	{
 		var es = new EventSource(EzWebGameURL + 'Event/Request/' + Key);
-		request = true;
+		console.log('openRequest()');
+		
 		es.onmessage = function (event) {
+			console.log('Receive Data');
 			events = JSON.parse(event.data);
 			for(var i=0; i<events.length ; i++)
 			{
@@ -125,8 +127,15 @@ var EzWebGame = (function(){
 			if(!request)
 			{
 				event.target.close();
+				console.log('System Close Request');
 			}
 		};
+	}
+	
+	function closeRequest()
+	{
+		request = false;
+		console.log('User Close Request');
 	}
 	
     function EzWebEventCalls(onEzWebEvent, data)
