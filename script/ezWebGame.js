@@ -2,7 +2,7 @@ var EzWebGame = (function(){
     var EzWebGameURL = "http://127.0.0.1/GameRound/";
     var Key = '';
     var LocalLoginURL = "./login.php";
-    var SSE;
+    var eventSSE;
 	
     function login()
     {
@@ -20,6 +20,7 @@ var EzWebGame = (function(){
       		url: EzWebGameURL + "user/logout/"+Key
        	}).done(function(data) {
             Key = '';
+			closeRequest()
             EzWebEventCalls(EzWebEvent.onLogout);
         });
     }
@@ -46,6 +47,7 @@ var EzWebGame = (function(){
             if(data.Wrong)alert(data.Wrong);
             else
             {
+				closeRequest();
 				openRequest();
                 var object = new Array();
                 EzWebEventCalls(EzWebEvent.onRoomCreated, {"Room":data.Room[0], "Players":data.Player});
@@ -65,6 +67,7 @@ var EzWebGame = (function(){
             else
 			{
 				closeRequest();
+				openRequest();
 				EzWebEventCalls(EzWebEvent.onRoomLeaved);
 			}
         });
@@ -81,6 +84,7 @@ var EzWebGame = (function(){
             if(data.Wrong)alert(data.Wrong);
             else
 			{
+				closeRequest();
 				openRequest();
 				EzWebEventCalls(EzWebEvent.onRoomJoined,{"Room":data.Room[0], "Players":data.Player});
 			}
@@ -114,19 +118,30 @@ var EzWebGame = (function(){
     
 	function openRequest()
 	{
-		SSE = new EventSource(EzWebGameURL + 'Event/Request/' + Key);
+		eventSSE = new EventSource(EzWebGameURL + 'Event/Request/' + Key);
 		console.log('openRequest()');
         
-		SSE.onmessage = function (event) {
+		eventSSE.onmessage = function (event) {
+			console.log(event.data);
 			events = JSON.parse(event.data).Events;
             console.log(new Date() + ": " + event.data);
 			for(var i=0; i<events.length ; i++)
 			{
-				console.log(events[i]["Type"] + ':' + events[i]["Param"]);
+				switch(events[i]["Type"])
+				{
+					case 'RefreshRoomList':
+						EzWebEventCalls(EzWebEvent.onListRoomDone, events[i]["Param"]);
+						break;
+					case 'roomChanged':
+						EzWebEventCalls(EzWebEvent.onRoomChanged);
+						break;
+					default:
+						console.log(events[i]["Type"] + ':' + events[i]["Param"]);
+				}
 			}
 		};
-		SSE.onerror = function (event) {
-			console.log('SSE Error');
+		eventSSE.onerror = function (event) {
+			console.log('eventSSE Error');
 			event.target.close();
 			openRequest();
 		}
@@ -134,7 +149,7 @@ var EzWebGame = (function(){
 	
 	function closeRequest()
 	{
-		SSE.close();
+		eventSSE.close();
 		console.log('User Close Request');
 	}
 	
@@ -154,7 +169,8 @@ var EzWebGame = (function(){
     return {
         // Prototype
         cKey: onReceiveFirstCKey,
-        
+        openSSE: openRequest,
+		
         // User
         login: login,
         logout: logout,

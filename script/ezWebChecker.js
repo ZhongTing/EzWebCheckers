@@ -1,6 +1,7 @@
 var EzWebEvent = (function(){
     function loginSuccessEvent()
     {
+		EzWebGame.openSSE();
         turnToLobbyLayer();
         EzWebGame.listRoomInfos();
     }
@@ -40,9 +41,11 @@ var EzWebEvent = (function(){
         refreshRoomInfoLayer(roomInfo.Room);
         refreshPlayersInRoomInfoLayer(roomInfo.Players);
     }
-    function getRoomInfoDoneEvent(data)
+    
+    function getRoomChangedEvent(roomInfo)
     {
-        console.log("Event: " + data);
+        refreshRoomInfoLayer(roomInfo.Room);
+        refreshPlayersInRoomInfoLayer(roomInfo.Players);
     }
     
     return {
@@ -57,7 +60,7 @@ var EzWebEvent = (function(){
         
         // 房間中
         onRoomLeaved: leavedRoomEvent,
-        onRoomInfoReceived: getRoomInfoDoneEvent,
+        onRoomChanged: getRoomChangedEvent,
         onRoomJoined: roomJoinedEvent
         // 遊戲中
     }
