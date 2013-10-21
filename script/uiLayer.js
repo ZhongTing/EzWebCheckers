@@ -33,9 +33,11 @@ registerLabel.on('click',function(){window.open('http://127.0.0.1/GameRound/Memb
 loginLayer.add(loginLabel).add(ezWebCheckerLabel).add(registerLabel);
 
 //LobbyLayer
-var logoutLabel = newButton(0,0,'logout',80).on('click',function(){EzWebGame.logout();});
-var refreshRoomListLabel = newButton(0,50,'refresh',80).on('click',function(){EzWebGame.listRoomInfos();});
-var createRoomLabel = newButton(0,100,'Create',80).on('click',function(){c_createGameRoom();});
+var logoutLabel = newButton(0,100,'logout',80).on('click',function(){EzWebGame.logout();});
+var createRoomLabel = newButton(0,150,'Create',80).on('click',function(){c_createGameRoom();});
+var refreshRoomListLabel = newButton(0,200,'refresh',80).on('click',function(){EzWebGame.listRoomInfos();});
+lobbyLayer.add(newLabel(0,10,'Lobby',stage.getWidth()-10,45));
+//roomInfoLayer.add(newLabel(stage.getWidth()-210,60,'MaxPlayer: '+room.max,200,20));
 lobbyLayer.add(logoutLabel).add(refreshRoomListLabel).add(createRoomLabel);
 
 //RoomLayer

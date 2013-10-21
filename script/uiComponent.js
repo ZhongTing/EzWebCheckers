@@ -90,10 +90,11 @@ function newPlayerZone(X,Y,Width,Height,PlayerName,Src,layer)
 }
 function newLobbyRoomZone(X,Y,Width,Height,RoomInfo,layer)
 {
-    var labelFontSize = 30;
+    var labelFontSize = 20;
     var group = new Kinetic.Group({
         x: X,
-        y: Y
+        y: Y,
+        opacity: 0.75,
     });
     var tag = new Kinetic.Tag({
         fill: 'black',
@@ -102,10 +103,31 @@ function newLobbyRoomZone(X,Y,Width,Height,RoomInfo,layer)
         shadowBlur: 0,
         shadowOffset: 5,
         shadowOpacity: 0.5,
-        width:Width,
-        height:Height
+        width:Width-Height,
+        height:Height,
+        pointerDirection: 'right',
+        pointerWidth: Height/2,
+        pointerHeight: Height,
+        x:Height/2,
     });
-    group.add(tag);
+    var triangle = new Kinetic.Shape({
+        drawFunc: function(context) {
+          context.beginPath();
+          context.moveTo(0, 0);
+          context.lineTo(Height/2, Height/2);
+          context.lineTo(0, Height);
+          context.lineTo(Height/2, Height);
+          context.lineTo(Height/2, 0);
+          context.closePath();
+          context.fillStrokeShape(this);
+        },
+        fill: 'black',
+        shadowColor: 'black',
+        shadowBlur: 0,
+        shadowOffset: 5,
+        shadowOpacity: 0.5,
+    });
+    group.add(tag).add(triangle);
     group.add(new Kinetic.Text({
         text: RoomInfo.title,
         fontSize: labelFontSize,
@@ -118,7 +140,7 @@ function newLobbyRoomZone(X,Y,Width,Height,RoomInfo,layer)
         text: RoomInfo.id,
         fontSize: labelFontSize,
         fill: 'white',
-        x:15,
+        x:Height/2+15,
         y:(Height-labelFontSize)/2
     }));
     group.add(new Kinetic.Text({
@@ -126,15 +148,17 @@ function newLobbyRoomZone(X,Y,Width,Height,RoomInfo,layer)
         fontSize: labelFontSize,
         fill: 'white',
         align:'left',
-        x:Width-70,
+        x:Width-Height/2-50,
         y:(Height-labelFontSize)/2
     }));
     group.on('mouseover',function(){
         tag.setFill('rgb(100,100,100)');
+        triangle.setFill('rgb(100,100,100)');
         this.getLayer().draw();
     })
     group.on('mouseout',function(){
         tag.setFill('black');
+        triangle.setFill('black');
         this.getLayer().draw();
     })
     group.on('click',function(){EzWebGame.joinGameRoom(RoomInfo.id)});
