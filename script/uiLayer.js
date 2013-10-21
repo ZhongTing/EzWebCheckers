@@ -33,9 +33,11 @@ registerLabel.on('click',function(){window.open('http://127.0.0.1/GameRound/Memb
 loginLayer.add(loginLabel).add(ezWebCheckerLabel).add(registerLabel);
 
 //LobbyLayer
-var logoutLabel = newButton(0,0,'logout',80).on('click',function(){EzWebGame.logout();});
-var refreshRoomListLabel = newButton(0,50,'refresh',80).on('click',function(){EzWebGame.listRoomInfos();});
-var createRoomLabel = newButton(0,100,'Create',80).on('click',function(){c_createGameRoom();});
+var logoutLabel = newButton(0,100,'logout',80).on('click',function(){EzWebGame.logout();});
+var createRoomLabel = newButton(0,150,'Create',80).on('click',function(){c_createGameRoom();});
+var refreshRoomListLabel = newButton(0,200,'refresh',80).on('click',function(){EzWebGame.listRoomInfos();});
+lobbyLayer.add(newLabel(0,10,'Lobby',stage.getWidth()-10,45));
+//roomInfoLayer.add(newLabel(stage.getWidth()-210,60,'MaxPlayer: '+room.max,200,20));
 lobbyLayer.add(logoutLabel).add(refreshRoomListLabel).add(createRoomLabel);
 
 //RoomLayer
@@ -44,8 +46,24 @@ var startLabel = newButton(0,150,'Start',80).on('click',function(){alert('coming
 roomLayer.add(leaveRoomLabel).add(startLabel);
 
 //GameLayer
-newImage(195,5,400,400,'./chess.jpg',gameLayer);
-
+var text = newText(0,0,'');
+gameLayer.add(text);
+newImage(195,5,400,400,'./chess.jpg',gameLayer,function(image){
+    image.on('mousemove', function(evt) {
+        //var mousePos = getMousePos(canvas, evt);
+        var message = 'Mouse pos: ' + evt.x + ',' + evt.y;
+        text.setText(message);
+        gameLayer.draw();        
+    });
+});
+gameLayer.add(new Kinetic.Circle({
+    x: 400,
+    y: 200,
+    radius: 30,
+    fill: 'red',
+    stroke: 'black',
+    strokeWidth: 4
+}));
 //Add layer to stage
 stage.add(backgroundLayer).add(loginLayer).add(lobbyLayer).add(roomLayer).add(gameLayer);
 stage.add(roomInfoLayer).add(roomPlayerLayer);
