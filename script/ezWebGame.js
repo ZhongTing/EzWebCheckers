@@ -2,7 +2,8 @@ var EzWebGame = (function(){
     var EzWebGameURL = "http://127.0.0.1/GameRound/";
     var Key = '';
     var LocalLoginURL = "./login.php";
-    
+    var SSE;
+	
     function login()
     {
         $.ajax({
@@ -45,6 +46,7 @@ var EzWebGame = (function(){
             if(data.Wrong)alert(data.Wrong);
             else
             {
+				openRequest();
                 var object = new Array();
                 EzWebEventCalls(EzWebEvent.onRoomCreated, {"Room":data.Room[0], "Players":data.Player});
             }
@@ -60,7 +62,11 @@ var EzWebGame = (function(){
             data = JSON.parse(data);
             Key = data.cKey;
             if(data.Wrong)alert(data.Wrong);
-            else EzWebEventCalls(EzWebEvent.onRoomLeaved);
+            else
+			{
+				closeRequest();
+				EzWebEventCalls(EzWebEvent.onRoomLeaved);
+			}
         });
     }
     
@@ -73,7 +79,11 @@ var EzWebGame = (function(){
             data = JSON.parse(data);
             Key = data.cKey;
             if(data.Wrong)alert(data.Wrong);
-            else EzWebEventCalls(EzWebEvent.onRoomJoined,{"Room":data.Room[0], "Players":data.Player});
+            else
+			{
+				openRequest();
+				EzWebEventCalls(EzWebEvent.onRoomJoined,{"Room":data.Room[0], "Players":data.Player});
+			}
         });
     }
     
@@ -102,6 +112,32 @@ var EzWebGame = (function(){
         }
     }
     
+	function openRequest()
+	{
+		SSE = new EventSource(EzWebGameURL + 'Event/Request/' + Key);
+		console.log('openRequest()');
+        
+		SSE.onmessage = function (event) {
+			events = JSON.parse(event.data).Events;
+            console.log(new Date() + ": " + event.data);
+			for(var i=0; i<events.length ; i++)
+			{
+				console.log(events[i]["Type"] + ':' + events[i]["Param"]);
+			}
+		};
+		SSE.onerror = function (event) {
+			console.log('SSE Error');
+			event.target.close();
+			openRequest();
+		}
+	}
+	
+	function closeRequest()
+	{
+		SSE.close();
+		console.log('User Close Request');
+	}
+	
     function EzWebEventCalls(onEzWebEvent, data)
     {
         if(onEzWebEvent)
