@@ -58,7 +58,7 @@ newImage(195,5,400,400,'./chess.jpg',chessBoardLayer,function(image){
         gameLayer.draw();        
     });
 });
-
+test();
 function test()
 {
     for(var i =0;i<chessPoints.length;i++)
@@ -69,12 +69,13 @@ function test()
             x: p.x,
             y: p.y,
             radius: 15,
-            stroke: 'black',
-            strokeWidth: 1,
+            //stroke: 'black',
+            //strokeWidth: 1,
         });
-        c.attrs.point = i;
-        c.on('mousemove',function(){
-            text2.setText(JSON.stringify(c.attrs.point));
+        c.attrs.point = chessPoints[i];
+        c.on('mousemove',function(event){
+            var message = JSON.stringify(event.targetNode.attrs.point);
+            text2.setText(message);
             gameLayer.draw();
         });
         gameLayer.add(c);

@@ -1,4 +1,4 @@
-var chessBoardCenter = {x:394,y:207};
+var chessBoardCenter = {x:393.5,y:207};
 var chessBoardGridEdge = 45;
 var chessPoints = getInitChessPoint();
 var users = getInitUserCheckers();
