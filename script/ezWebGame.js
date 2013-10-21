@@ -2,7 +2,8 @@ var EzWebGame = (function(){
     var EzWebGameURL = "http://127.0.0.1/GameRound/";
     var Key = '';
     var LocalLoginURL = "./login.php";
-    
+    var request = false;
+	
     function login()
     {
         $.ajax({
@@ -45,6 +46,7 @@ var EzWebGame = (function(){
             if(data.Wrong)alert(data.Wrong);
             else
             {
+				event();
                 var object = new Array();
                 EzWebEventCalls(EzWebEvent.onRoomCreated, {"Room":data.Room[0], "Players":data.Player});
             }
@@ -60,7 +62,11 @@ var EzWebGame = (function(){
             data = JSON.parse(data);
             Key = data.cKey;
             if(data.Wrong)alert(data.Wrong);
-            else EzWebEventCalls(EzWebEvent.onRoomLeaved);
+            else
+			{
+				request = false;
+				EzWebEventCalls(EzWebEvent.onRoomLeaved);
+			}
         });
     }
     
@@ -73,7 +79,11 @@ var EzWebGame = (function(){
             data = JSON.parse(data);
             Key = data.cKey;
             if(data.Wrong)alert(data.Wrong);
-            else EzWebEventCalls(EzWebEvent.onRoomJoined,{"Room":data.Room[0], "Players":data.Player});
+            else
+			{
+				event();
+				EzWebEventCalls(EzWebEvent.onRoomJoined,{"Room":data.Room[0], "Players":data.Player});
+			}
         });
     }
     
@@ -102,6 +112,23 @@ var EzWebGame = (function(){
         }
     }
     
+	function event()
+	{
+		var es = new EventSource(EzWebGameURL + 'Event/Request/' + Key);
+		request = true;
+		es.onmessage = function (event) {
+			events = JSON.parse(event.data);
+			for(var i=0; i<events.length ; i++)
+			{
+				console.log(events[i]["Type"] + ':' + events[i]["Param"])
+			}
+			if(!request)
+			{
+				event.target.close();
+			}
+		};
+	}
+	
     function EzWebEventCalls(onEzWebEvent, data)
     {
         if(onEzWebEvent)
