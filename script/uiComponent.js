@@ -52,7 +52,7 @@ function newText(px,py,Text,FontSize,color)
       });
     return simpleText;
 }
-function newImage(X,Y,Width,Height,Src,layer)
+function newImage(X,Y,Width,Height,Src,layer,onLoadFunc)
 {
     var imageObj = new Image();
     imageObj.onload = function() {
@@ -65,6 +65,7 @@ function newImage(X,Y,Width,Height,Src,layer)
         });
         layer.add(image);
         layer.draw();
+        if(onLoadFunc)onLoadFunc(image);
     }
     imageObj.src = Src;
 }

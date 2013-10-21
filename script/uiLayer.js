@@ -46,8 +46,24 @@ var startLabel = newButton(0,150,'Start',80).on('click',function(){alert('coming
 roomLayer.add(leaveRoomLabel).add(startLabel);
 
 //GameLayer
-newImage(195,5,400,400,'./chess.jpg',gameLayer);
-
+var text = newText(0,0,'');
+gameLayer.add(text);
+newImage(195,5,400,400,'./chess.jpg',gameLayer,function(image){
+    image.on('mousemove', function(evt) {
+        //var mousePos = getMousePos(canvas, evt);
+        var message = 'Mouse pos: ' + evt.x + ',' + evt.y;
+        text.setText(message);
+        gameLayer.draw();        
+    });
+});
+gameLayer.add(new Kinetic.Circle({
+    x: 400,
+    y: 200,
+    radius: 30,
+    fill: 'red',
+    stroke: 'black',
+    strokeWidth: 4
+}));
 //Add layer to stage
 stage.add(backgroundLayer).add(loginLayer).add(lobbyLayer).add(roomLayer).add(gameLayer);
 stage.add(roomInfoLayer).add(roomPlayerLayer);
