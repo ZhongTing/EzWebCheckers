@@ -118,7 +118,7 @@ var EzWebGame = (function(){
 		console.log('openRequest()');
         
 		SSE.onmessage = function (event) {
-			events = JSON.parse(event.data);
+			events = JSON.parse(event.data).Events;
             console.log(new Date() + ": " + event.data);
 			for(var i=0; i<events.length ; i++)
 			{
