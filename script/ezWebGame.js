@@ -2,7 +2,7 @@ var EzWebGame = (function(){
     var EzWebGameURL = "http://127.0.0.1/GameRound/";
     var Key = '';
     var LocalLoginURL = "./login.php";
-    var request = false;
+    var SSE;
 	
     function login()
     {
@@ -114,27 +114,27 @@ var EzWebGame = (function(){
     
 	function openRequest()
 	{
-		var es = new EventSource(EzWebGameURL + 'Event/Request/' + Key);
+		SSE = new EventSource(EzWebGameURL + 'Event/Request/' + Key);
 		console.log('openRequest()');
-		
-		es.onmessage = function (event) {
-			console.log('Receive Data');
+        
+		SSE.onmessage = function (event) {
 			events = JSON.parse(event.data);
+            console.log(new Date() + ": " + event.data);
 			for(var i=0; i<events.length ; i++)
 			{
-				console.log(events[i]["Type"] + ':' + events[i]["Param"])
-			}
-			if(!request)
-			{
-				event.target.close();
-				console.log('System Close Request');
+				console.log(events[i]["Type"] + ':' + events[i]["Param"]);
 			}
 		};
+		SSE.onerror = function (event) {
+			console.log('SSE Error');
+			event.target.close();
+			openRequest();
+		}
 	}
 	
 	function closeRequest()
 	{
-		request = false;
+		SSE.close();
 		console.log('User Close Request');
 	}
 	
