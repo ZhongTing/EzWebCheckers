@@ -1,6 +1,6 @@
-turnToLoginLayer();
+//turnToLoginLayer();
 //turnToRoomLayer();
-//turnToGameLayer();
+turnToGameLayer();
 
 function turnToLoginLayer()
 {
@@ -25,6 +25,7 @@ function turnToRoomLayer()
 function turnToGameLayer()
 {
     initLayer();
+    chessBoardLayer.show().draw();
     gameLayer.show().draw();
 }
 function refreshRoomInfoLayer(room)
