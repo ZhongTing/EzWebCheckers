@@ -11,6 +11,7 @@ var roomLayer = new Kinetic.Layer();
 var roomInfoLayer = new Kinetic.Layer();
 var roomPlayerLayer = new Kinetic.Layer();
 var gameLayer = new Kinetic.Layer();
+var chessBoardLayer = new Kinetic.Layer();
 var lobbyRoomsLayer;
 
 //BcakgroundLayer
@@ -47,8 +48,9 @@ roomLayer.add(leaveRoomLabel).add(startLabel);
 
 //GameLayer
 var text = newText(0,0,'');
-gameLayer.add(text);
-newImage(195,5,400,400,'./chess.jpg',gameLayer,function(image){
+var text2 = newText(0,50,'');
+gameLayer.add(text).add(text2);
+newImage(195,5,400,400,'./chess.jpg',chessBoardLayer,function(image){
     image.on('mousemove', function(evt) {
         //var mousePos = getMousePos(canvas, evt);
         var message = 'Mouse pos: ' + evt.x + ',' + evt.y;
@@ -56,14 +58,45 @@ newImage(195,5,400,400,'./chess.jpg',gameLayer,function(image){
         gameLayer.draw();        
     });
 });
-gameLayer.add(new Kinetic.Circle({
-    x: 400,
-    y: 200,
-    radius: 30,
-    fill: 'red',
-    stroke: 'black',
-    strokeWidth: 4
-}));
+
+function test()
+{
+    for(var i =0;i<chessPoints.length;i++)
+    {
+        var p = gridXyzToXy(chessPoints[i]);
+        p = gridXyToXy(p);
+        var c = new Kinetic.Circle({
+            x: p.x,
+            y: p.y,
+            radius: 15,
+            stroke: 'black',
+            strokeWidth: 1,
+        });
+        c.attrs.point = i;
+        c.on('mousemove',function(){
+            text2.setText(JSON.stringify(c.attrs.point));
+            gameLayer.draw();
+        });
+        gameLayer.add(c);
+    }
+}
+for(var i =0;i<users.length;i++)
+{
+    for(var j =0;j<users[i].points.length;j++)
+    {
+        var p = gridXyzToXy(users[i].points[j]);
+        p = gridXyToXy(p);
+        gameLayer.add(new Kinetic.Circle({
+            x: p.x,
+            y: p.y,
+            radius: 15,
+            fill: users[i].color,
+            stroke: 'black',
+            strokeWidth: 1,
+            draggable: true
+        }));
+    }
+}
 //Add layer to stage
-stage.add(backgroundLayer).add(loginLayer).add(lobbyLayer).add(roomLayer).add(gameLayer);
+stage.add(backgroundLayer).add(loginLayer).add(lobbyLayer).add(roomLayer).add(chessBoardLayer).add(gameLayer);
 stage.add(roomInfoLayer).add(roomPlayerLayer);
