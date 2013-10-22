@@ -50,7 +50,7 @@ var EzWebGame = (function(){
 				closeRequest();
 				openRequest();
                 var object = new Array();
-                EzWebEventCalls(EzWebEvent.onRoomCreated, {"Room":data.Room[0], "Players":data.Player});
+                EzWebEventCalls(EzWebEvent.onRoomCreated, {"Room":data.Room[0], "Players":data.Players});
             }
         });
     }
@@ -86,7 +86,7 @@ var EzWebGame = (function(){
 			{
 				closeRequest();
 				openRequest();
-				EzWebEventCalls(EzWebEvent.onRoomJoined,{"Room":data.Room[0], "Players":data.Player});
+				EzWebEventCalls(EzWebEvent.onRoomJoined,{"Room":data.Room[0], "Players":data.Players});
 			}
         });
     }
@@ -124,7 +124,7 @@ var EzWebGame = (function(){
 		eventSSE.onmessage = function (event) {
 			console.log(event.data);
 			events = JSON.parse(event.data).Events;
-            console.log(new Date() + ": " + event.data);
+            //console.log(new Date() + ": " + event.data);
 			for(var i=0; i<events.length ; i++)
 			{
 				switch(events[i]["Type"])
@@ -136,7 +136,7 @@ var EzWebGame = (function(){
 						EzWebEventCalls(EzWebEvent.onRoomChanged, events[i]["Param"]);
 						break;
 					default:
-						console.log(events[i]["Type"] + ':' + events[i]["Param"]);
+						console.log(new Date() + "=> " + events[i]["Type"] + ':' + events[i]["Param"]);
 				}
 			}
 		};
