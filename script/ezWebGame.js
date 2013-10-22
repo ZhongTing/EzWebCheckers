@@ -135,6 +135,13 @@ var EzWebGame = (function(){
 					case 'roomChanged':
 						EzWebEventCalls(EzWebEvent.onRoomChanged, events[i]["Param"]);
 						break;
+					case 'start':
+						EzWebEventCalls(EzWebEvent.onRoomStarted);
+						break;
+					case 'turn':
+						var param = events[i]["Param"].replace("\\\"","\"");
+						EzWebEventCalls(EzWebEvent.onChangeTrun, JSON.parse(param));
+						break;
 					default:
 						console.log(new Date() + "=> " + events[i]["Type"] + ':' + events[i]["Param"]);
 				}
@@ -162,7 +169,7 @@ var EzWebGame = (function(){
         }
         else
         {
-            console.log("Not Found This Event: " + onEzWebEvent.name);
+            console.log("Not Found This Event: " + onEzWebEvent.toString());
         }
     }
     
