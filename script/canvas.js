@@ -60,6 +60,15 @@ function refreshLobbyRooms(roomInfos)
     }
     stage.add(lobbyRoomsLayer);
 }
+function clickChecker(point)
+{
+    //是否輪到我
+    if(point.player>=0)
+    {
+        selectedChecker = point;
+        displayPlaceToMove(event.targetNode.attrs.point);    
+    }
+}
 function displayPlaceToMove(point)
 {
     gameEffectLayer.removeChildren();
@@ -89,15 +98,6 @@ function showEffect()
     gameEffectLayer.clear();
     gameEffectLayer.draw();
 }
-function clickChecker(point)
-{
-    //是否輪到我
-    if(point.player>=0)
-    {
-        selectedChecker = point;
-        displayPlaceToMove(event.targetNode.attrs.point);    
-    }
-}
 function moveCheckerTo(point)
 {
     gameEffectLayer.removeChildren();
@@ -105,7 +105,7 @@ function moveCheckerTo(point)
     gameEffectLayer.draw();
     point.player = selectedChecker.player;
     point.circle.setFill(selectedChecker.circle.attrs.fill);
-    selectedChecker.player = null;
+    selectedChecker.player = -1;
     selectedChecker.circle.attrs.fill='';
     selectedChecker = null;
     gameLayer.clear();
