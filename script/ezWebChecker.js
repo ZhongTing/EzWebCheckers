@@ -18,7 +18,7 @@ var EzWebEvent = (function(){
     
     function listRoomDoneEvent(roomInfos)
     {
-        console.log(JSON.stringify(roomInfos));
+        //console.log(JSON.stringify(roomInfos));
         refreshLobbyRooms(roomInfos);
     }
     
@@ -44,7 +44,8 @@ var EzWebEvent = (function(){
     
     function getRoomChangedEvent(roomInfo)
     {
-        refreshRoomInfoLayer(roomInfo.Room);
+        //refreshRoomInfoLayer(roomInfo.Room);
+		//console.log(roomInfo);
         refreshPlayersInRoomInfoLayer(roomInfo.Players);
     }
     
