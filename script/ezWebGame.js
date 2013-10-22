@@ -160,6 +160,22 @@ var EzWebGame = (function(){
 		console.log('User Close Request');
 	}
 	
+	function startRoom()
+	{
+		$.ajax({
+      		url: EzWebGameURL + "Exec/Start/" + Key 
+       	}).done(function(data) {
+      		console.log(data);
+            data = JSON.parse(data);
+            Key = data.cKey;
+            if(data.Wrong)alert(data.Wrong);
+			else
+			{
+				EzWebEventCalls(EzWebEvent.onRoomStarted);
+			}
+        });
+	}
+	
     function EzWebEventCalls(onEzWebEvent, data)
     {
         if(onEzWebEvent)
@@ -188,7 +204,9 @@ var EzWebGame = (function(){
         // Room
         createGameRoom: createRoom,
         leaveGameRoom: leaveRoom,
-        joinGameRoom: joinRoom
+        joinGameRoom: joinRoom,
+		startGameRoom: startRoom
+		
         // Exec
     }
 })();
