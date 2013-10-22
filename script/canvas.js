@@ -1,6 +1,6 @@
-turnToLoginLayer();
+//turnToLoginLayer();
 //turnToRoomLayer();
-//turnToGameLayer();
+turnToGameLayer();
 
 function turnToLoginLayer()
 {
@@ -27,6 +27,7 @@ function turnToGameLayer()
     initLayer();
     chessBoardLayer.show().draw();
     gameLayer.show().draw();
+    gameEffectLayer.show().draw();
 }
 function refreshRoomInfoLayer(room)
 {
@@ -58,4 +59,57 @@ function refreshLobbyRooms(roomInfos)
         y+=50;
     }
     stage.add(lobbyRoomsLayer);
+}
+function displayPlaceToMove(point)
+{
+    gameEffectLayer.removeChildren();
+    findAndRecordOnBoard(point);
+    showEffect();
+}
+function showEffect()
+{
+    gameEffectLayer.removeChildren();
+    for(var i in chessPoints)
+    {
+        if(!chessPoints[i].computed)continue;
+        var p = gridXyToXy(chessPoints[i]);
+        var c = new Kinetic.Circle({
+            x: p.x,
+            y: p.y,
+            radius: 15,
+            fill: 'black',
+            stroke: 'black',
+            //strokeWidth: 1,
+        });
+        c.attrs.point = chessPoints[i];
+        c.on('click',function(evt){moveCheckerTo(evt.targetNode.attrs.point)});
+        gameEffectLayer.add(c);
+        chessPoints[i].computed = false;
+    }
+    gameEffectLayer.clear();
+    gameEffectLayer.draw();
+}
+function clickChecker(point)
+{
+    //是否輪到我
+    if(point.player>=0)
+    {
+        selectedChecker = point;
+        displayPlaceToMove(event.targetNode.attrs.point);    
+    }
+}
+function moveCheckerTo(point)
+{
+    gameEffectLayer.removeChildren();
+    gameEffectLayer.clear();
+    gameEffectLayer.draw();
+    point.player = selectedChecker.player;
+    point.circle.setFill(selectedChecker.circle.attrs.fill);
+    selectedChecker.player = null;
+    selectedChecker.circle.attrs.fill='';
+    selectedChecker = null;
+    gameEffectLayer.clear();
+    gameEffectLayer.draw();
+    
+    //結束回合
 }
