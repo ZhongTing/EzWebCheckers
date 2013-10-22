@@ -44,7 +44,7 @@ lobbyLayer.add(logoutLabel).add(refreshRoomListLabel).add(createRoomLabel);
 
 //RoomLayer
 var leaveRoomLabel = newButton(0,100,'Leave',80).on('click',function(){EzWebGame.leaveGameRoom();});
-var startLabel = newButton(0,150,'Start',80).on('click',function(){alert('coming soon');});
+var startLabel = newButton(0,150,'Start',80).on('click',function(){EzWebGame.startGameRoom();});
 roomLayer.add(leaveRoomLabel).add(startLabel);
 
 //GameLayer

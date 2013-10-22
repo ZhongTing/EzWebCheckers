@@ -51,7 +51,7 @@ var EzWebEvent = (function(){
     
 	function roomStartdEvent()
 	{
-	
+		turnToGameLayer();
 	}
 	
 	function changeTurnEvent(player)
