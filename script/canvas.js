@@ -108,8 +108,21 @@ function moveCheckerTo(point)
     selectedChecker.player = null;
     selectedChecker.circle.attrs.fill='';
     selectedChecker = null;
-    gameEffectLayer.clear();
-    gameEffectLayer.draw();
+    gameLayer.clear();
+    gameLayer.draw();
     
     //µ²§ô¦^¦X
+}
+function initGame(player)
+{
+    var pics = ['./red.jpg','./yellow.jpg','green.jpg'];
+    var y = 20;
+    gameLayer.removeChildren();
+    for(var i=0;i<player.length;i++)
+    {
+        newPlayerZone(20,y,150,80,'test',pics[i],gameLayer);
+        y+=130;
+    }
+    chessPoints = getInitChessPoint();
+    test();
 }
