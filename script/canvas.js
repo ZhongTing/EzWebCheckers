@@ -126,3 +126,23 @@ function initGame(player)
     chessPoints = getInitChessPoint();
     test();
 }
+/*
+var player = [{name:'test'},{name:'test'},{name:'test'}];
+initGame(player);
+gameLayer.clear().draw()
+*/
+function displayTurns()
+{
+    var labelWidth = stage.getWidth();
+    var turnLabel = newLabel(0,stage.getHeight()/2,'ani',100,50);
+    gameEffectLayer.add(turnLabel);
+    gameEffectLayer.clear().draw();
+    
+    var anim = new Kinetic.Animation(function(frame) {
+        //turnLabel.setX(frame.time/100);
+        var period = 5000;
+        var scale = frame.time * 2 * Math.PI / period + 0.001;
+        turnLabel.setScale(scale, 1);
+    }, gameEffectLayer);
+    anim.start();
+}
