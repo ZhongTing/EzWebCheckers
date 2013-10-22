@@ -8,16 +8,40 @@ var point;
 
 function getInitChessPoint()
 {
+    moveDirection = ["up", "right", "rightdown", "down", "left", "leftup"];
     point = {};
     
-    //定義黃色 player 1 所在之地, TipPoint{-2,4} move rightdown & left
-    setPlayerAndDomain({x:-2,y:4},"rightdown","left",1,1);
-    
-    //定義紅色 player 0 , TipPoint{-2,-2} move up & rightdown
+    //定義紅色領地0 & player 0 所在之地, TipPoint{-2,-2} move up & rightdown
     setPlayerAndDomain({x:-2,y:-2},"up","rightdown",0,0);
     
-    //定義綠色 player 2 , TipPoint{4,-2} move left & up
-    setPlayerAndDomain({x:4,y:-2},"left","up",2,2);
+    //定義綠色領地2,                     TipPoint{-4,-2} move right & down
+    setPlayerAndDomain({x:-4,y:2}, "right","down",-1,2);
+    
+    //定義黃色領地1 & player 1 所在之地, TipPoint{-2,4}  move rightdown & left
+    setPlayerAndDomain({x:-2,y:4}, "rightdown","left",1,1);
+    
+    //定義紅色領地0,                     TipPoint{2,2}   move down & leftup
+    setPlayerAndDomain({x:2,y:2},  "down","leftup",-1,0);
+    
+    //定義綠色領地2 & player 2 所在之地, TipPoint{4,-2}  move left & up
+    setPlayerAndDomain({x:4,y:-2}, "left","up",2,2);
+    
+    //定義黃色領地1,                     TipPoint{2,-4}  move leftup & right
+    setPlayerAndDomain({x:2,y:-4}, "leftup","right",-1,1);
+    
+    //定義中間無人區塊
+    var CenterPoint = {x:0,y:0};
+    for(var i=0; i<6; i++)
+    {
+        tempPoint = getMovePoint(moveDirection[i],CenterPoint);
+        tempPoint.player=-1;
+        tempPoint.domain={x:-1};
+        point[tempPoint.x+","+tempPoint.y] = tempPoint;
+    }
+    CenterPoint.player=-1;
+    CenterPoint.domain={x:-1};
+    point[CenterPoint.x+","+CenterPoint.y] = CenterPoint;
+    
     return point;
 }
 
@@ -77,19 +101,20 @@ function setPlayerAndDomain(TipPoint, leftDirection, rightDirection, playerNumbe
         for(var j=0; j<=i; j++)
         {
             var tempPoint = {x:TipPoint.x, y:TipPoint.y};
-            //move rightdown
+            //move leftDirection
             for(var k=0; k<i; k++)
             {
                 tempPoint = getMovePoint(leftDirection, tempPoint);
             }
-            //left
+            //move rightDirection
             for(var k=0; k<j; k++)
             {
                 tempPoint = getMovePoint(rightDirection, tempPoint);
             }
-            tempPoint.player = playerNumber;
-            tempPoint.domain = domain;
-            console.log(i + ", " + j + ": ");console.log(tempPoint);
+            tempPoint = point[tempPoint.x+","+tempPoint.y] == undefined ? tempPoint : point[tempPoint.x+","+tempPoint.y];
+            tempPoint.player = tempPoint.player == undefined || tempPoint.player == -1 ? playerNumber : tempPoint.player;
+            tempPoint.domain = tempPoint.domain == undefined ? {x:domain} : {x:tempPoint.domain.x,y:domain}; 
+            //console.log(i + ", " + j + ": ");console.log(tempPoint);
             point[tempPoint.x+","+tempPoint.y] = tempPoint;
         }
     }
