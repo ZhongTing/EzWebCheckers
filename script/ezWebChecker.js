@@ -35,6 +35,13 @@ var EzWebEvent = (function(){
         EzWebGame.listRoomInfos();
     }
     
+	function getRoomChangedEvent(roomInfo)
+    {
+        //refreshRoomInfoLayer(roomInfo.Room);
+		//console.log(roomInfo);
+        refreshPlayersInRoomInfoLayer(roomInfo.Players);
+    }
+	
     function roomJoinedEvent(roomInfo)
     {
         turnToRoomLayer();
@@ -42,13 +49,16 @@ var EzWebEvent = (function(){
         refreshPlayersInRoomInfoLayer(roomInfo.Players);
     }
     
-    function getRoomChangedEvent(roomInfo)
-    {
-        //refreshRoomInfoLayer(roomInfo.Room);
-		//console.log(roomInfo);
-        refreshPlayersInRoomInfoLayer(roomInfo.Players);
-    }
-    
+	function roomStartdEvent()
+	{
+	
+	}
+	
+	function changeTurnEvent(player)
+	{
+		console.log(player.userName + "[" + player.userId + "]");
+	}
+	
     return {
         // 登入遊戲
         onLoginSuccess: loginSuccessEvent,
@@ -62,8 +72,11 @@ var EzWebEvent = (function(){
         // 房間中
         onRoomLeaved: leavedRoomEvent,
         onRoomChanged: getRoomChangedEvent,
-        onRoomJoined: roomJoinedEvent
+        onRoomJoined: roomJoinedEvent,
+		onRoomStarted: roomStartdEvent,
+		
         // 遊戲中
+		onChangeTrun: changeTurnEvent
     }
 })();
 
