@@ -60,13 +60,12 @@ newImage(195,5,400,400,'./chess.jpg',chessBoardLayer,function(image){
     });
 });
 test();
+
 function test()
 {
-    //for(var i =0;i<chessPoints.length;i++)
     for(var i in chessPoints)
     {
-        var p = gridXyzToXy(chessPoints[i]);
-        p = gridXyToXy(p);
+        var p = gridXyToXy(chessPoints[i]);
         var c = new Kinetic.Circle({
             x: p.x,
             y: p.y,
@@ -78,39 +77,15 @@ function test()
         c.attrs.point = chessPoints[i];
         c.on('mousemove',function(event){
             var point = event.targetNode.attrs.point;
-            var message = point.x+','+point.y+','+point.z;
+            var message = point.x+','+point.y;
             text2.setText(message);
             gameLayer.draw();
         });
         c.on('click',function(event){
-            displayPlaceToMove(event.targetNode.attrs.point);
+            clickChecker(event.targetNode.attrs.point);
         })
         chessPoints[i].circle = c;
         gameLayer.add(c);
-    }
-}
-function displayPlaceToMove(point)
-{
-    gameEffectLayer.removeChild();
-    var p = findPlaceToMove([point]);
-    gameEffectLayer.draw();
-}
-function findPlaceToMove(path)
-{
-    return findPlaceToMoveByOneWay(path,{x:1,y:0,z:0})
-}
-function findPlaceToMoveByOneWay(path,dir)
-{
-    var point = path[path.length-1];
-    var jumpPoint = getChessPoint(point.x+dir.x*2,point.y+dir.y*2,point.z+dir.z*2);
-    if(!jumpPoint)
-    {
-        return path;   
-    }
-    else
-    {
-        path.push(jumpPoint);
-        return findPlaceToMoveByOneWay(path,dir);
     }
 }
 //Add layer to stage
