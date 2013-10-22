@@ -1,6 +1,6 @@
-//turnToLoginLayer();
+turnToLoginLayer();
 //turnToRoomLayer();
-turnToGameLayer();
+//turnToGameLayer();
 
 function turnToLoginLayer()
 {

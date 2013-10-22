@@ -44,7 +44,8 @@ var EzWebEvent = (function(){
     
     function getRoomChangedEvent(roomInfo)
     {
-        refreshRoomInfoLayer(roomInfo.Room);
+        //refreshRoomInfoLayer(roomInfo.Room);
+		//console.log(roomInfo);
         refreshPlayersInRoomInfoLayer(roomInfo.Players);
     }
     

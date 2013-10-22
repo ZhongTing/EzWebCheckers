@@ -133,7 +133,7 @@ var EzWebGame = (function(){
 						EzWebEventCalls(EzWebEvent.onListRoomDone, events[i]["Param"]);
 						break;
 					case 'roomChanged':
-						EzWebEventCalls(EzWebEvent.onRoomChanged);
+						EzWebEventCalls(EzWebEvent.onRoomChanged, events[i]["Param"]);
 						break;
 					default:
 						console.log(events[i]["Type"] + ':' + events[i]["Param"]);
