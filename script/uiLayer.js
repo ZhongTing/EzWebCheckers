@@ -11,6 +11,7 @@ var roomLayer = new Kinetic.Layer();
 var roomInfoLayer = new Kinetic.Layer();
 var roomPlayerLayer = new Kinetic.Layer();
 var gameLayer = new Kinetic.Layer();
+var gameEffectLayer = new Kinetic.Layer();
 var chessBoardLayer = new Kinetic.Layer();
 var lobbyRoomsLayer;
 
@@ -47,8 +48,8 @@ var startLabel = newButton(0,150,'Start',80).on('click',function(){alert('coming
 roomLayer.add(leaveRoomLabel).add(startLabel);
 
 //GameLayer
-var text = newText(0,0,'');
-var text2 = newText(0,50,'');
+var text = newText(20,0,'');
+var text2 = newText(20,50,'');
 gameLayer.add(text).add(text2);
 newImage(195,5,400,400,'./chess.jpg',chessBoardLayer,function(image){
     image.on('mousemove', function(evt) {
@@ -61,7 +62,8 @@ newImage(195,5,400,400,'./chess.jpg',chessBoardLayer,function(image){
 test();
 function test()
 {
-    for(var i =0;i<chessPoints.length;i++)
+    //for(var i =0;i<chessPoints.length;i++)
+    for(var i in chessPoints)
     {
         var p = gridXyzToXy(chessPoints[i]);
         p = gridXyToXy(p);
@@ -69,35 +71,48 @@ function test()
             x: p.x,
             y: p.y,
             radius: 15,
-            //stroke: 'black',
+            fill: userCheckerColors[chessPoints[i].player],
+            stroke: 'black',
             //strokeWidth: 1,
         });
         c.attrs.point = chessPoints[i];
         c.on('mousemove',function(event){
-            var message = JSON.stringify(event.targetNode.attrs.point);
+            var point = event.targetNode.attrs.point;
+            var message = point.x+','+point.y+','+point.z;
             text2.setText(message);
             gameLayer.draw();
         });
+        c.on('click',function(event){
+            displayPlaceToMove(event.targetNode.attrs.point);
+        })
+        chessPoints[i].circle = c;
         gameLayer.add(c);
     }
 }
-for(var i =0;i<users.length;i++)
+function displayPlaceToMove(point)
 {
-    for(var j =0;j<users[i].points.length;j++)
+    gameEffectLayer.removeChild();
+    var p = findPlaceToMove([point]);
+    gameEffectLayer.draw();
+}
+function findPlaceToMove(path)
+{
+    return findPlaceToMoveByOneWay(path,{x:1,y:0,z:0})
+}
+function findPlaceToMoveByOneWay(path,dir)
+{
+    var point = path[path.length-1];
+    var jumpPoint = getChessPoint(point.x+dir.x*2,point.y+dir.y*2,point.z+dir.z*2);
+    if(!jumpPoint)
     {
-        var p = gridXyzToXy(users[i].points[j]);
-        p = gridXyToXy(p);
-        gameLayer.add(new Kinetic.Circle({
-            x: p.x,
-            y: p.y,
-            radius: 15,
-            fill: users[i].color,
-            stroke: 'black',
-            strokeWidth: 1,
-            draggable: true
-        }));
+        return path;   
+    }
+    else
+    {
+        path.push(jumpPoint);
+        return findPlaceToMoveByOneWay(path,dir);
     }
 }
 //Add layer to stage
 stage.add(backgroundLayer).add(loginLayer).add(lobbyLayer).add(roomLayer).add(chessBoardLayer).add(gameLayer);
-stage.add(roomInfoLayer).add(roomPlayerLayer);
+stage.add(roomInfoLayer).add(roomPlayerLayer).add(gameEffectLayer);
