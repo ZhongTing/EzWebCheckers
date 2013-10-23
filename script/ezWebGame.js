@@ -1,10 +1,112 @@
 var EzWebGame = (function(){
     var EzWebGameURL = "http://127.0.0.1/GameRound/";
-    var Key = '';
     var LocalLoginURL = "./login.php";
-    var eventSSE;
     var TurnId = 0;
-	
+	var request = (function(){
+        var queue = [];
+        var Key = '';
+        var LastKey = '';
+        var eventSSE;
+        
+        function receiveKey(key)
+        {
+            if(queue.length > 0)
+            {
+                var node = queue.shift();
+                node.requestObject.url += key;
+                $.ajax(node.requestObject).done(node.doneRequest);
+            }
+            else
+            {
+                LastKey = key;
+                Key = key;
+            }
+        }
+        
+        function send(requestObject, doneRequest)
+        {
+            if(Key != '')
+            {
+                requestObject.url += Key;
+                Key = '';
+                $.ajax(requestObject).done(doneRequest);
+            }
+            else
+            {
+                queue.push({"requestObject":requestObject, "doneRequest":doneRequest});
+            }
+        }
+        
+        function clean()
+        {
+            Key = '';
+            LastKey = '';
+        }
+        
+        function openSSE()
+        {
+            eventSSE = new EventSource(EzWebGameURL + 'Event/Request/' + LastKey);
+    		console.log('openRequest()');
+            
+    		eventSSE.onmessage = function (event) {
+    			console.log(event.data);
+    			events = JSON.parse(event.data).Events;
+                //console.log(new Date() + ": " + event.data);
+    			for(var i=0; i<events.length ; i++)
+    			{
+    				switch(events[i]["Type"])
+    				{
+    					case 'RefreshRoomList':
+    						EzWebEventCalls(EzWebEvent.onListRoomDone, events[i]["Param"]);
+    						break;
+    					case 'roomChanged':
+    						EzWebEventCalls(EzWebEvent.onRoomChanged, events[i]["Param"]);
+    						break;
+    					case 'start':
+    						EzWebEventCalls(EzWebEvent.onRoomStarted, events[i]["Param"]);
+    						break;
+    					case 'turn':
+    						var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
+                            TurnId = param.userId;
+    						EzWebEventCalls(EzWebEvent.onChangeTrun, param);
+    						break;
+                        case 'message':
+    				        EzWebEventCalls(EzWebEvent.onReceiveStep, events[i]["Param"]);
+                            break;
+    					default:
+    						console.log(new Date() + "=> " + events[i]["Type"] + ':' + events[i]["Param"]);
+    				}
+    			}
+    		};
+    		eventSSE.onerror = function (event) {
+    			console.log('eventSSE Error');
+    			event.target.close();
+    			openRequest();
+    		}
+        }
+        
+        function closeSSE()
+        {
+            eventSSE.close();
+            console.log('User Close Request');
+        }
+        
+        function getId()
+        {
+            var infos = LastKey.split("_");
+            return infos[1];
+        }
+        
+        return {
+            receiveKey: receiveKey,
+            send: send,
+            clean: clean,
+            openSSE: openSSE,
+            closeSSE: closeSSE,
+            getUserId: getId
+        }
+	})();
+    
     function login()
     {
         $.ajax({
@@ -17,34 +119,43 @@ var EzWebGame = (function(){
     
     function logout()
     {
-        $.ajax({
-      		url: EzWebGameURL + "user/logout/"+Key
-       	}).done(function(data) {
-            Key = '';
+        var requestObject = {
+      		url: EzWebGameURL + "user/logout/"
+       	};
+        request.send(requestObject, doneRequest);
+        function doneRequest(data)
+        {
+            request.clean();
 			closeRequest()
             EzWebEventCalls(EzWebEvent.onLogout);
-        });
+        }
     }
     
     function listRooms()
     {
-        $.ajax({
-      		url: EzWebGameURL + "Room/ListRoomInfos/"+Key
-       	}).done(function(data) {
+        var requestObject = {
+      		url: EzWebGameURL + "Room/ListRoomInfos/"
+       	};
+        request.send(requestObject, doneRequest);
+        function doneRequest(data)
+        {
             data = JSON.parse(data);
-            Key = data.cKey;
+            request.receiveKey(data.cKey);
             EzWebEventCalls(EzWebEvent.onListRoomDone, data.Room);
-        });
+        }
     }
     
     function createRoom(title,minPlayer,maxPlayer)
     {
-        $.ajax({
-      		url: EzWebGameURL + "Room/Create/" + title + "/" + minPlayer + "/" + maxPlayer + "/" + Key 
-       	}).done(function(data) {
-      		console.log(data);
+        var requestObject = {
+      		url: EzWebGameURL + "Room/Create/" + title + "/" + minPlayer + "/" + maxPlayer + "/" 
+       	};
+        request.send(requestObject, doneRequest);
+        function doneRequest(data)
+        {
+            console.log(data);
             data = JSON.parse(data);
-            Key = data.cKey;
+            request.receiveKey(data.cKey);
             TurnId = 0;
             if(data.Wrong)alert(data.Wrong);
             else
@@ -54,17 +165,20 @@ var EzWebGame = (function(){
                 var object = new Array();
                 EzWebEventCalls(EzWebEvent.onRoomCreated, {"Room":data.Room[0], "Players":data.Players});
             }
-        });
+        }
     }
     
     function leaveRoom()
     {
-        $.ajax({
-      		url: EzWebGameURL + "Room/Leave/" + Key 
-       	}).done(function(data) {
-      		console.log(data);
+        var requestObject = {
+      		url: EzWebGameURL + "Room/Leave/"
+       	};
+        request.send(requestObject, doneRequest);
+        function doneRequest(data)
+        {
+            console.log(data);
             data = JSON.parse(data);
-            Key = data.cKey;
+            request.receiveKey(data.cKey);
             if(data.Wrong)alert(data.Wrong);
             else
 			{
@@ -72,17 +186,20 @@ var EzWebGame = (function(){
 				openRequest();
 				EzWebEventCalls(EzWebEvent.onRoomLeaved);
 			}
-        });
+        }
     }
     
     function joinRoom(roomId)
     {
-        $.ajax({
-      		url: EzWebGameURL + "Room/join/" +roomId+'/'+ Key 
-       	}).done(function(data) {
-      		console.log(data);
+        var requestObject = {
+      		url: EzWebGameURL + "Room/join/" +roomId+"/"
+       	};
+        request.send(requestObject, doneRequest);
+        function doneRequest(data)
+        {
+            console.log(data);
             data = JSON.parse(data);
-            Key = data.cKey;
+            request.receiveKey(data.cKey);
             TurnId = 0;
             if(data.Wrong)alert(data.Wrong);
             else
@@ -91,19 +208,22 @@ var EzWebGame = (function(){
 				openRequest();
 				EzWebEventCalls(EzWebEvent.onRoomJoined,{"Room":data.Room[0], "Players":data.Players});
 			}
-        });
+        }
     }
     
     function listRoomPlayers()
     {
-        $.ajax({
-      		url: EzWebGameURL + "Room/ListRoomPlayers/" + Key 
-       	}).done(function(data) {
-      		console.log(data);
+        var requestObject = {
+      		url: EzWebGameURL + "Room/ListRoomPlayers/"
+       	};
+        request.send(requestObject, doneRequest);
+        function doneRequest(data)
+        {
+            console.log(data);
             data = JSON.parse(data);
-            Key = data.cKey;
+            request.receiveKey(data.cKey);
             if(data.Wrong)alert(data.Wrong);
-        });
+        }
     }
     
     function onReceiveFirstCKey(data)
@@ -114,79 +234,43 @@ var EzWebGame = (function(){
         }
         else
         {
-            Key = data.cKey;
+            request.receiveKey(data.cKey);
             EzWebEventCalls(EzWebEvent.onLoginSuccess)
         }
     }
     
 	function openRequest()
 	{
-		eventSSE = new EventSource(EzWebGameURL + 'Event/Request/' + Key);
-		console.log('openRequest()');
-        
-		eventSSE.onmessage = function (event) {
-			console.log(event.data);
-			events = JSON.parse(event.data).Events;
-            //console.log(new Date() + ": " + event.data);
-			for(var i=0; i<events.length ; i++)
-			{
-				switch(events[i]["Type"])
-				{
-					case 'RefreshRoomList':
-						EzWebEventCalls(EzWebEvent.onListRoomDone, events[i]["Param"]);
-						break;
-					case 'roomChanged':
-						EzWebEventCalls(EzWebEvent.onRoomChanged, events[i]["Param"]);
-						break;
-					case 'start':
-						EzWebEventCalls(EzWebEvent.onRoomStarted, events[i]["Param"]);
-						break;
-					case 'turn':
-						var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
-                        TurnId = param.userId;
-						EzWebEventCalls(EzWebEvent.onChangeTrun, param);
-						break;
-                    case 'message':
-				        EzWebEventCalls(EzWebEvent.onReceiveStep, events[i]["Param"]);
-                        break;
-					default:
-						console.log(new Date() + "=> " + events[i]["Type"] + ':' + events[i]["Param"]);
-				}
-			}
-		};
-		eventSSE.onerror = function (event) {
-			console.log('eventSSE Error');
-			event.target.close();
-			openRequest();
-		}
+		request.openSSE();
 	}
 	
 	function closeRequest()
 	{
-		eventSSE.close();
-		console.log('User Close Request');
+		request.closeSSE();
 	}
 	
 	function startRoom()
 	{
-		$.ajax({
-      		url: EzWebGameURL + "Exec/Start/" + Key 
-       	}).done(function(data) {
-      		console.log(data);
+	    var requestObject = {
+      		url: EzWebGameURL + "Exec/Start/"
+       	};
+        request.send(requestObject, doneRequest);
+        function doneRequest(data)
+        {
+            console.log(data);
             data = JSON.parse(data);
-            Key = data.cKey;
+            request.receiveKey(data.cKey);
             if(data.Wrong)alert(data.Wrong);
 			else
 			{
 				EzWebEventCalls(EzWebEvent.onRoomStarted, {"Players":data.Players});
 			}
-        });
+        }
 	}
 	
     function getUserId()
     {
-        var infos = Key.split("_");
-        return infos[1];
+        return request.getUserId();
     }
     
     function isTurnSelf()
@@ -209,37 +293,43 @@ var EzWebGame = (function(){
     
     function nextRound()
     {
-        $.ajax({
-      		url: EzWebGameURL + "Exec/NextRound/" + Key 
-       	}).done(function(data) {
-      		console.log(data);
+        var requestObject = {
+      		url: EzWebGameURL + "Exec/NextRound/"
+       	};
+        request.send(requestObject, doneRequest);
+        function doneRequest(data)
+        {
+            console.log(data);
             data = JSON.parse(data);
-            Key = data.cKey;
+            request.receiveKey(data.cKey);
             if(data.Wrong)alert(data.Wrong);
 			else
 			{
                 TurnId = data.NextRound.userId;
 				EzWebEventCalls(EzWebEvent.onChangeTrun, data.NextRound);
 			}
-        });
+        }
     }
     
     function sendMessage(instruction)
     {
-        $.ajax({
-      		url: EzWebGameURL + "Exec/SendMessage/" + Key,
+        var requestObject = {
+      		url: EzWebGameURL + "Exec/SendMessage/",
             type: "POST",
             data: {message: instruction}
-       	}).done(function(data) {
-      		console.log(data);
+       	};
+        request.send(requestObject, doneRequest);
+        function doneRequest(data)
+        {
+            console.log(data);
             data = JSON.parse(data);
-            Key = data.cKey;
+            request.receiveKey(data.cKey);
             if(data.Wrong)alert(data.Wrong);
 			else
 			{
                 console.log("Send: " + instruction);
 			}
-        });
+        }
     }
     
     function arriveFinalStep()
