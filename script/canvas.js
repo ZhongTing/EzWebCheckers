@@ -94,6 +94,14 @@ function showPlaceToMoveEffect()
             //strokeWidth: 1,
         });
         c.attrs.point = chessPoints[i];
+        c.on('mouseover',function(evt){
+            showPreviewPath(selectedChecker,evt.targetNode.attrs.point);
+        });
+        c.on('mouseout',function(){
+            gameEffectLayer.find('#previewLine').remove();
+            gameEffectLayer.clear().draw();
+        })
+        
         if(EzWebGame.isTurnSelf())
         {
             c.on('click',function(evt){
@@ -112,6 +120,46 @@ function showPlaceToMoveEffect()
     gameEffectLayer.clear();
     gameEffectLayer.draw();
 }
+function showPreviewPath(startPoint,finalPoint)
+{
+    var path = findPath(startPoint,finalPoint);
+    var points = getLinePointsArray(path);
+    for(var i =0;i<path.length;i++)
+    {
+        var p = gridXyToXy(path[i]);
+        points.push(p.x);
+        points.push(p.y);
+    }
+    var line = new Kinetic.Line({
+        points: points,
+        stroke: userCheckerColors[EzWebGame.getNowTurnUserOrder()],
+        strokeWidth: 5,
+        lineCap: 'round',
+        lineJoin: 'round',
+        dashArray: [10, 10],
+        id:'previewLine'
+    });
+    gameEffectLayer.find('#previewLine').remove();
+    gameEffectLayer.add(line);
+    gameEffectLayer.clear().draw();
+}
+function getLinePointsArray(arrayPoint)
+{
+    var points = [];
+    for(var i =0;i<arrayPoint.length;i++)
+    {
+        var p = gridXyToXy(arrayPoint[i]);
+        points.push(p.x);
+        points.push(p.y);
+    }
+    return points;
+}
+function getBoardLine(fromPoint,toPoint)
+{
+    var from = gridXyToXy(fromPoint);
+    var to = gridXyToXy(toPoint);
+    
+}
 function displaySelectCheckerEffect(point)
 {
     greyBackgroundEffect(gameEffectLayer,null,194);
@@ -121,15 +169,84 @@ function displaySelectCheckerEffect(point)
 function moveCheckerTo(point)
 {
     gameEffectLayer.removeChildren();
-    gameEffectLayer.clear();
-    gameEffectLayer.draw();
-    point.player = selectedChecker.player;
-    point.circle.setFill(selectedChecker.circle.attrs.fill);
-    selectedChecker.player = -1;
-    selectedChecker.circle.attrs.fill='';
-    selectedChecker = null;
-    gameLayer.clear();
-    gameLayer.draw();
+    var path = findPath(selectedChecker,point);
+    var points = getLinePointsArray(path);
+    var line = new Kinetic.Line({
+        points: points,
+        //stroke: userCheckerColors[selectedChecker.player],
+        stroke:'black',
+        strokeWidth: 5,
+        lineCap: 'round',
+        lineJoin: 'round',
+        id:'previewLine'
+    });
+    gameEffectLayer.add(line);
+    var anim = new Kinetic.Animation(function(frame) {
+        var period = 5000;
+        if(frame.time>period)
+        {
+            anim.stop();
+            point.player = selectedChecker.player;
+            point.circle.setFill(selectedChecker.circle.attrs.fill);
+            selectedChecker.player = -1;
+            selectedChecker.circle.attrs.fill='';
+            selectedChecker = null;
+            gameLayer.clear().draw();
+        }
+    }, gameEffectLayer);
+    anim.start();
+    gameEffectLayer.clear().draw();        
+}
+function moveCheckerTo2(point)
+{
+    gameEffectLayer.removeChildren();
+    var path = findPath(selectedChecker,point);
+    var points = getLinePointsArray(path);
+    points.shift();
+    points.shift();
+    var p = gridXyToXy(selectedChecker);
+    var c = new Kinetic.Circle({
+            x: p.x,
+            y: p.y,
+            radius: 15,
+            fill: userCheckerColors[selectedChecker.player],
+            stroke: 'black',
+            //strokeWidth: 1,
+    });
+    gameEffectLayer.add(c);
+    var anim = new Kinetic.Animation(function(frame) {
+        var period = 5000;
+        if(points.length<=1)
+        {
+            anim.stop();
+            point.player = selectedChecker.player;
+            point.circle.setFill(selectedChecker.circle.attrs.fill);
+            selectedChecker.player = -1;
+            selectedChecker.circle.attrs.fill='';
+            selectedChecker = null;
+            gameLayer.clear().draw();
+            gameEffectLayer.clear().draw();        
+        }
+        else
+        {
+            var cx = c.getX();
+            var cy = c.getY();
+            var x = points[0];
+            var y = points[1];
+            var m = (y-cy)/(x-cx);
+            var rate = frame /5000 * (y>cy?1:-1);
+            var type = x>cx?"right":"left";
+            c.setX(cx+rate);
+            c.setY(cy+m*rate);
+            if(type=="right" && cx>x || type=="left" && cx<=x)
+            {
+                x = points.shift();
+                y = points.shift();
+            }
+        }
+    }, gameEffectLayer);
+    gameEffectLayer.clear().draw();
+    anim.start();
 }
 function initGame(player)
 {
