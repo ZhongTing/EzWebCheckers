@@ -169,7 +169,58 @@ function jump_recursive(jumpStack, sureStack, moveDirection, tChessPoints)
     //console.log(nextJumpStack);
     jump_recursive(nextJumpStack, sureStack, moveDirection, tChessPoints);
 }
-
+function findPath(startPoint,finalPoint)
+{
+    var jumpStack = [];
+    var path = [startPoint];
+    var moveDirection = getMoveDirection();
+    var tChessPoints = cloneChessPoint(chessPoints, ["x", "y", "player", "domain"]);
+    var chessPoint;
+    for(var i=0; i<6; i++)
+    {// 對選到的點 往六個方向探詢 是否可以走
+        chessPoint = getPoint(getMovePoint(moveDirection[i], startPoint), tChessPoints);
+        if(!chessPoint)
+        {
+            continue;
+        }
+        else if(chessPoint.x==finalPoint.x&&chessPoint.y==finalPoint.y)
+        {
+            path.push(finalPoint);
+            return path;
+        }
+        chessPoint.mark = true;
+    }
+    return findPath_recursive(startPoint,finalPoint,path,tChessPoints);
+}
+function findPath_recursive(startPoint,finalPoint,path,tChessPoints)
+{
+    var result = null;
+    var moveDirection = getMoveDirection();
+    path.push(startPoint);
+    for(var i=0; i<6; i++)
+    {// 對選到的點 往六個方向探詢 是否可以走
+        var middleChecker = getMovePoint(moveDirection[i], startPoint);
+        if(!middleChecker||middleChecker.player<0)continue;
+        var moveP = getMovePoint(moveDirection[i], startPoint,true)
+        chessPoint = getPoint(moveP, tChessPoints);
+        if(!chessPoint || chessPoint.mark)
+        {
+            continue;
+        }
+        else if(chessPoint.x==finalPoint.x&&chessPoint.y==finalPoint.y)
+        {
+            path.push(finalPoint);
+            return path;
+        }
+        else
+        {
+            chessPoint.mark = true;
+            result = findPath_recursive(chessPoint,finalPoint,path,tChessPoints);
+            if(result!=null)return result;
+        }
+    }
+    return result;
+}
 function isPointDomainBelongPlayer(point, playerNumber)
 {
     if(point.domain[0] == -1)
