@@ -149,6 +149,9 @@ var EzWebGame = (function(){
                         TurnId = param.userId;
 						EzWebEventCalls(EzWebEvent.onChangeTrun, param);
 						break;
+                    case 'message':
+				        EzWebEventCalls(EzWebEvent.onReceiveStep, events[i]["Param"]);
+                        break;
 					default:
 						console.log(new Date() + "=> " + events[i]["Type"] + ':' + events[i]["Param"]);
 				}
@@ -236,9 +239,22 @@ var EzWebGame = (function(){
         });
     }
     
-    function sendMessage()
+    function sendMessage(instruction)
     {
-        
+        $.ajax({
+      		url: EzWebGameURL + "Exec/SendMessage/" + Key,
+            type: "POST",
+            data: {message: instruction}
+       	}).done(function(data) {
+      		console.log(data);
+            data = JSON.parse(data);
+            Key = data.cKey;
+            if(data.Wrong)alert(data.Wrong);
+			else
+			{
+                console.log("Send: " + instruction);
+			}
+        });
     }
     
     function arriveFinalStep()

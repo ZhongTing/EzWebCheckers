@@ -61,6 +61,21 @@ var EzWebEvent = (function(){
         displayTurns(player);
 	}
 	
+    function receiveStepEvent(instruction)
+    {
+        var step = JSON.parse(instruction.replace("\\\"","\""));
+        switch(step.Method)
+        {
+            case 'Select':
+                selectedChecker = getPoint(step.Point, chessPoints);
+                displayPlaceToMove(selectedChecker);
+                break;
+            case 'MoveTo':
+                moveCheckerTo(getPoint(step.Point, chessPoints));
+                break;
+        }
+    }
+    
     return {
         // 登入遊戲
         onLoginSuccess: loginSuccessEvent,
@@ -78,7 +93,8 @@ var EzWebEvent = (function(){
 		onRoomStarted: roomStartdEvent,
 		
         // 遊戲中
-		onChangeTrun: changeTurnEvent
+		onChangeTrun: changeTurnEvent,
+        onReceiveStep: receiveStepEvent
     }
 })();
 
