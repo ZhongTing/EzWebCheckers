@@ -1,6 +1,6 @@
-//turnToLoginLayer();
+turnToLoginLayer();
 //turnToRoomLayer();
-turnToGameLayer();
+//turnToGameLayer();
 
 function turnToLoginLayer()
 {
@@ -62,8 +62,7 @@ function refreshLobbyRooms(roomInfos)
 }
 function clickChecker(point)
 {
-    //¬O§_½ü¨ì§Ú
-    if(point.player>=0)
+    if(point.player>=0 && EzWebGame.isTurnSelf())
     {
         selectedChecker = point;
         displayPlaceToMove(event.targetNode.attrs.point);    

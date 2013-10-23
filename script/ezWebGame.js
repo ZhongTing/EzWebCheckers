@@ -3,6 +3,7 @@ var EzWebGame = (function(){
     var Key = '';
     var LocalLoginURL = "./login.php";
     var eventSSE;
+    var TurnId = 0;
 	
     function login()
     {
@@ -44,6 +45,7 @@ var EzWebGame = (function(){
       		console.log(data);
             data = JSON.parse(data);
             Key = data.cKey;
+            TurnId = 0;
             if(data.Wrong)alert(data.Wrong);
             else
             {
@@ -81,6 +83,7 @@ var EzWebGame = (function(){
       		console.log(data);
             data = JSON.parse(data);
             Key = data.cKey;
+            TurnId = 0;
             if(data.Wrong)alert(data.Wrong);
             else
 			{
@@ -139,8 +142,9 @@ var EzWebGame = (function(){
 						EzWebEventCalls(EzWebEvent.onRoomStarted);
 						break;
 					case 'turn':
-						var param = events[i]["Param"].replace("\\\"","\"");
-						EzWebEventCalls(EzWebEvent.onChangeTrun, JSON.parse(param));
+						var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
+                        TurnId = param.userId;
+						EzWebEventCalls(EzWebEvent.onChangeTrun, param);
 						break;
 					default:
 						console.log(new Date() + "=> " + events[i]["Type"] + ':' + events[i]["Param"]);
@@ -176,6 +180,17 @@ var EzWebGame = (function(){
         });
 	}
 	
+    function getUserId()
+    {
+        var infos = Key.split("_");
+        return infos[1];
+    }
+    
+    function isTurnSelf()
+    {
+        return TurnId == getUserId();
+    }
+    
     function EzWebEventCalls(onEzWebEvent, data)
     {
         if(onEzWebEvent)
@@ -193,7 +208,8 @@ var EzWebGame = (function(){
         // Prototype
         cKey: onReceiveFirstCKey,
         openSSE: openRequest,
-		
+		isTurnSelf: isTurnSelf,
+        
         // User
         login: login,
         logout: logout,
