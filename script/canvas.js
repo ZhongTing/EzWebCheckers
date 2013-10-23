@@ -78,8 +78,14 @@ function displayPlaceToMove(point)
 function showEffect()
 {
     gameEffectLayer.removeChildren();
+    var moveDirection = getMoveDirection();
     for(var i in chessPoints)
     {
+        for(var j in moveDirection)
+        {
+            delete chessPoints[i][moveDirection[j]];
+        }
+        
         if(!chessPoints[i].computed)continue;
         var p = gridXyToXy(chessPoints[i]);
         var c = new Kinetic.Circle({
@@ -93,7 +99,7 @@ function showEffect()
         c.attrs.point = chessPoints[i];
         c.on('click',function(evt){moveCheckerTo(evt.targetNode.attrs.point)});
         gameEffectLayer.add(c);
-        chessPoints[i].computed = false;
+        delete chessPoints[i].computed;
     }
     gameEffectLayer.clear();
     gameEffectLayer.draw();

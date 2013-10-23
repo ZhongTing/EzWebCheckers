@@ -7,7 +7,7 @@ var selectedChecker;
 function getInitChessPoint()
 {
     var point = {};
-    var moveDirection = ["up", "right", "rightdown", "down", "left", "leftup"];
+    var moveDirection = getMoveDirection();
     
     //定義紅色領地0 & player 0 所在之地, TipPoint{-2,-2} move up & rightdown
     setPlayerAndDomain({x:-2,y:-2},"up","rightdown",0,0);
@@ -69,9 +69,9 @@ function getInitChessPoint()
     }
 }
 
-function getChessPoint(point)
+function getPoint(point, points)
 {
-    return chessPoints[point.x+","+point.y];
+    return points[point.x+","+point.y];
 }
 
 function gridXyToXy(point)
@@ -83,39 +83,94 @@ function gridXyToXy(point)
 
 function findAndRecordOnBoard(point)
 {
-    findNear(point.x+1,point.y);
-    findNear(point.x-1,point.y);
-    findNear(point.x,point.y+1);
-    findNear(point.x,point.y-1);
-    findNear(point.x+1,point.y-1);
-    findNear(point.x-1,point.y+1);
-    find_recursive(point);
-}
-function findNear(x,y)
-{
-    var point = getChessPoint(x,y);
-    if(!point)return;
-    if(point.player>=0)return;
-    point.computed = true;
+    var jumpStack = [];
+    var sureStack = [];
+    var moveDirection = getMoveDirection();
+    var tChessPoints = chessPoints;
+    var selectedPoint = getPoint(point, chessPoints);
+    
+    var chessPoint;
+    for(var i=0; i<6; i++)
+    {// 對選到的點 往六個方向探詢 是否可以走
+        chessPoint = getPoint(getMovePoint(moveDirection[i], point), tChessPoints);
+        if(!chessPoint)
+        {
+            continue;
+        }
+        else if(chessPoint.player < 0)
+        {
+            sureStack.push(chessPoint);
+        }
+    }
+    
+    jumpStack.push(getPoint(point, tChessPoints));
+    //console.log(jumpStack);
+    jump_recursive(jumpStack, sureStack, moveDirection, tChessPoints);
+    
+    //console.log(sureStack);
+    for(var i in sureStack)
+    {
+        tPoint = sureStack[i];
+        chessPoint = getPoint(tPoint, chessPoints);
+        if(isPointDomainBelongPlayer(chessPoint, selectedPoint.player))
+        {
+            chessPoint.computed = true;
+        }
+    }
 }
 
-function find_recursive(point)
+function jump_recursive(jumpStack, sureStack, moveDirection, tChessPoints)
 {
-    var jumpPoint = [];
-    jumpPoint.push(getChessPoint(point.x+2,point.y));
-    jumpPoint.push(getChessPoint(point.x-2,point.y));
-    jumpPoint.push(getChessPoint(point.x,point.y+2));
-    jumpPoint.push(getChessPoint(point.x,point.y-2));
-    jumpPoint.push(getChessPoint(point.x+2,point.y-2));
-    jumpPoint.push(getChessPoint(point.x-2,point.y+2));
-    
-    for(var i=0;i<jumpPoint.length;i++)
-    {
-        if(!jumpPoint[i]||jumpPoint[i].computed)continue;
-        if(jumpPoint[i].player>=0)continue;
-        jumpPoint[i].computed = true;
-        find_recursive(jumpPoint[i]);
+    if(jumpStack.length == 0)
+    {// 不用繼續遞迴
+        return;
     }
+    //console.log("Start jump_recursive");
+    var nextJumpStack = [];
+    var chessPoint;
+    for(var i in jumpStack)
+    {
+        tPoint = jumpStack[i]; 
+        for(var j in moveDirection)
+        {
+            var thisRoundMoveDirection = moveDirection[j];
+            if(tPoint[thisRoundMoveDirection] == true)
+            {// 此點此方向已經跳過
+                continue;
+            }
+            
+            chessPoint = getPoint(getMovePoint(thisRoundMoveDirection, tPoint), tChessPoints);
+            if(!(chessPoint && chessPoint.player >= 0))
+            {// 確認此方向是否可以跳躍
+                continue;
+            }
+            
+            chessPoint = getPoint(getMovePoint(thisRoundMoveDirection, tPoint, true), tChessPoints);
+            //console.log(chessPoint);
+            if(!chessPoint)
+            {
+                continue;
+            }
+            else if(chessPoint.player < 0)
+            {
+                tPoint[thisRoundMoveDirection] = true;
+                nextJumpStack.push(chessPoint);
+                sureStack.push(chessPoint);
+            }
+        }
+    }
+    //console.log("Next Round Jump");
+    //console.log(nextJumpStack);
+    jump_recursive(nextJumpStack, sureStack, moveDirection, tChessPoints);
+}
+
+function isPointDomainBelongPlayer(point, playerNumber)
+{
+    if(point.domain.x == -1 || point.domain.x == playerNumber || point.domain.y == playerNumber)
+    {
+        return true;
+    }    
+    return false;
 }
 
 function getMovePoint(direction, point, isJump)
@@ -143,3 +198,25 @@ function getMovePoint(direction, point, isJump)
             break;
     }
 }
+
+function getMoveDirection()
+{
+    return ["up", "right", "rightdown", "down", "left", "leftup"];
+}
+
+function deepClone(destination, source)
+{
+    for (var property in source)
+    {
+        if (typeof source[property] === "object" && source[property] !== null )
+        {
+            destination[property] = destination[property] || {};
+            arguments.callee(destination[property], source[property]);
+        } 
+        else 
+        {
+            destination[property] = source[property];
+        }
+    }
+    return destination;
+};
