@@ -52,6 +52,19 @@ function newText(px,py,Text,FontSize,color)
       });
     return simpleText;
 }
+function newNowPlayerEffect(px,py,Width,Height,color,id)
+{
+    return new Kinetic.Tag({
+        x:px,
+        y:py,
+        stroke: color,
+        strokeWidth: 5,
+        width:Width,
+        height:Height,
+        id:id,
+        name:'playerZoneEffect'
+    });
+}
 function newImage(X,Y,Width,Height,Src,layer,onLoadFunc)
 {
     var imageObj = new Image();
