@@ -122,29 +122,45 @@ function initGame(player)
     gameLayer.removeChildren();
     for(var i=0;i<player.length;i++)
     {
-        newPlayerZone(20,y,150,80,'test',pics[i],gameLayer);
+        newPlayerZone(20,y,150,80,player[i].userName,pics[i],gameLayer);
+        gameLayer.add(newNowPlayerEffect(20-2,y-4,150+4,110+4,'blue',player[i].userId));
         y+=130;
     }
+    stage.find('.playerZoneEffect').each(function(a){a.hide()});
     chessPoints = getInitChessPoint();
     test();
 }
 /*
-var player = [{name:'test'},{name:'test'},{name:'test'}];
+var player = [{userId:1,userName:'test'},{userId:2,userName:'test'},{userId:3,userName:'test'}];
 initGame(player);
 gameLayer.clear().draw()
 */
-function displayTurns()
+
+/*
+displayTurns({userId:1,userName:'test'})
+*/
+function displayTurns(player)
 {
     var labelWidth = stage.getWidth();
-    var turnLabel = newLabel(0,stage.getHeight()/2,'ani',100,50);
+    var turnLabel = newLabel(-labelWidth,stage.getHeight()/2,player.userName+"' turn.",labelWidth,50);
     gameEffectLayer.add(turnLabel);
     gameEffectLayer.clear().draw();
     
+    stage.find('.playerZoneEffect').each(function(a){a.hide()});
+    stage.find('#'+player.userId)[0].show();
+    gameLayer.clear().draw();
+    
     var anim = new Kinetic.Animation(function(frame) {
-        //turnLabel.setX(frame.time/100);
         var period = 5000;
-        var scale = frame.time * 2 * Math.PI / period + 0.001;
-        turnLabel.setScale(scale, 1);
+        if(frame.time >=period/2)
+        {
+            this.stop();
+            gameEffectLayer.removeChildren();
+            gameEffectLayer.clear();
+        }
+        var scale = Math.cos(frame.time * 2 * Math.PI / period) * 10; 
+        var x = turnLabel.getX()+scale;
+        turnLabel.setX(x);
     }, gameEffectLayer);
     anim.start();
 }

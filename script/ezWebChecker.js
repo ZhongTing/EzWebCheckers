@@ -52,11 +52,13 @@ var EzWebEvent = (function(){
 	function roomStartdEvent(roomInfo)
 	{
 		turnToGameLayer();
+        initGame(roomInfo.Players);
 	}
 	
 	function changeTurnEvent(player)
 	{
 		console.log(player.userName + "[" + player.userId + "]");
+        displayTurns(player);
 	}
 	
     return {
