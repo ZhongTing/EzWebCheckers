@@ -167,6 +167,7 @@ function displayTurns(player)
     stage.find('#'+player.userId)[0].show();
     gameLayer.clear().draw();
 }
+
 function showMessage(message)
 {
     var labelWidth = stage.getWidth();
