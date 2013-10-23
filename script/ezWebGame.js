@@ -4,7 +4,8 @@ var EzWebGame = (function(){
     var LocalLoginURL = "./login.php";
     var eventSSE;
     var TurnId = 0;
-	
+	var gamePlayers = [];//遊戲開始的玩家
+    
     function login()
     {
         $.ajax({
@@ -140,6 +141,8 @@ var EzWebGame = (function(){
 						break;
 					case 'start':
 						EzWebEventCalls(EzWebEvent.onRoomStarted, events[i]["Param"]);
+                        gamePlayers = events[i].Param.Players;
+                        //for(var i=0;i<players.length;i++)temp.push(players[i])
 						break;
 					case 'turn':
 						var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
@@ -176,6 +179,7 @@ var EzWebGame = (function(){
 			else
 			{
 				EzWebEventCalls(EzWebEvent.onRoomStarted, {"Players":data.Players});
+                gamePlayers = data.Players;
 			}
         });
 	}
@@ -186,6 +190,17 @@ var EzWebGame = (function(){
         return infos[1];
     }
     
+    function getUserTurnOrder()
+    {
+        var userId = getUserId();
+        for(var order=0;order<gamePlayers.length;order++)
+            if(gamePlayers[order].userId == userId)return order;
+    }
+    function getNowTurnUserOrder()
+    {
+        for(var order=0;order<gamePlayers.length;order++)
+            if(gamePlayers[order].userId == TurnId)return order;
+    }
     function isTurnSelf()
     {
         return TurnId == getUserId();
@@ -236,7 +251,8 @@ var EzWebGame = (function(){
         cKey: onReceiveFirstCKey,
         openSSE: openRequest,
 		isTurnSelf: isTurnSelf,
-        
+        getNowTurnUserOrder:getNowTurnUserOrder,
+        getUserTurnOrder:getUserTurnOrder,
         // User
         login: login,
         logout: logout,

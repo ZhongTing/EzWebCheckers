@@ -62,7 +62,7 @@ function refreshLobbyRooms(roomInfos)
 }
 function clickChecker(point)
 {
-    if(point.player>=0 && EzWebGame.isTurnSelf())
+    if(point.player>=0 && EzWebGame.isTurnSelf() && EzWebGame.getUserTurnOrder() == point.player)
     {
         selectedChecker = point;
         displayPlaceToMove(event.targetNode.attrs.point);    
@@ -130,15 +130,7 @@ function initGame(player)
     chessPoints = getInitChessPoint();
     test();
 }
-/*
-var player = [{userId:1,userName:'test'},{userId:2,userName:'test'},{userId:3,userName:'test'}];
-initGame(player);
-gameLayer.clear().draw()
-*/
 
-/*
-displayTurns({userId:1,userName:'test'})
-*/
 function displayTurns(player)
 {
     var labelWidth = stage.getWidth();
