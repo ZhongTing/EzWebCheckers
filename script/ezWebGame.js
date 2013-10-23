@@ -51,7 +51,7 @@ var EzWebGame = (function(){
 			console.log('openRequest()');
 			
 			eventSSE.onmessage = function (event) {
-				console.log(event.data);
+				console.debug(event.data);
 				events = JSON.parse(event.data).Events;
 				//console.log(new Date() + ": " + event.data);
 				for(var i=0; i<events.length ; i++)
@@ -76,6 +76,22 @@ var EzWebGame = (function(){
 						case 'message':
 							EzWebEventCalls(EzWebEvent.onReceiveStep, events[i]["Param"]);
 							break;
+                        case 'checkWin':
+                            var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
+							EzWebEventCalls(EzWebEvent.onCheckWin, param.WinnerId);
+                            break;
+                        case 'arrived':
+                            console.debug(events[i]["Param"]);
+                            if(events[i]["Param"]!="Cheat")
+                            {
+                                var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
+                                EzWebEventCalls(EzWebEvent.onAccomplishGame, param);
+                            }
+                            break;
+                        case 'rank':
+                            var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
+                            EzWebEventCalls(EzWebEvent.onGameFinish, param);
+                            break;
 						default:
 							console.log(new Date() + "=> " + events[i]["Type"] + ':' + events[i]["Param"]);
 					}
@@ -156,7 +172,7 @@ var EzWebGame = (function(){
         request.send(requestObject, doneRequest);
         function doneRequest(data)
         {
-            console.log(data);
+            console.debug(data);
             data = JSON.parse(data);
             request.receiveKey(data.cKey);
             TurnId = 0;
@@ -179,7 +195,7 @@ var EzWebGame = (function(){
         request.send(requestObject, doneRequest);
         function doneRequest(data)
         {
-            console.log(data);
+            console.debug(data);
             data = JSON.parse(data);
             request.receiveKey(data.cKey);
             if(data.Wrong)alert(data.Wrong);
@@ -200,7 +216,7 @@ var EzWebGame = (function(){
         request.send(requestObject, doneRequest);
         function doneRequest(data)
         {
-            console.log(data);
+            console.debug(data);
             data = JSON.parse(data);
             request.receiveKey(data.cKey);
             TurnId = 0;
@@ -222,7 +238,7 @@ var EzWebGame = (function(){
         request.send(requestObject, doneRequest);
         function doneRequest(data)
         {
-            console.log(data);
+            console.debug(data);
             data = JSON.parse(data);
             request.receiveKey(data.cKey);
             if(data.Wrong)alert(data.Wrong);
@@ -260,7 +276,7 @@ var EzWebGame = (function(){
         request.send(requestObject, doneRequest);
         function doneRequest(data)
         {
-            console.log(data);
+            console.debug(data);
             data = JSON.parse(data);
             request.receiveKey(data.cKey);
             if(data.Wrong)alert(data.Wrong);
@@ -277,9 +293,9 @@ var EzWebGame = (function(){
         return request.getUserId();
     }
     
-    function getUserTurnOrder()
+    function getUserTurnOrder(userId)
     {
-        var userId = request.getUserId();
+        userId = userId || request.getUserId();
         for(var order in gamePlayers)
             if(gamePlayers[order].userId == userId)
 				return order;
@@ -318,7 +334,7 @@ var EzWebGame = (function(){
         request.send(requestObject, doneRequest);
         function doneRequest(data)
         {
-            console.log(data);
+            console.debug(data);
             data = JSON.parse(data);
             request.receiveKey(data.cKey);
             if(data.Wrong)alert(data.Wrong);
@@ -340,7 +356,7 @@ var EzWebGame = (function(){
         request.send(requestObject, doneRequest);
         function doneRequest(data)
         {
-            console.log(data);
+            console.debug(data);
             data = JSON.parse(data);
             request.receiveKey(data.cKey);
             if(data.Wrong)alert(data.Wrong);
@@ -353,7 +369,40 @@ var EzWebGame = (function(){
     
     function arriveFinalStep()
     {
-        
+        var requestObject = {
+      		url: EzWebGameURL + "Exec/ArriveFinalStep/",
+       	};
+        request.send(requestObject, doneRequest);
+        function doneRequest(data)
+        {
+            console.debug(data);
+            data = JSON.parse(data);
+            request.receiveKey(data.cKey);
+            if(data.Wrong)alert(data.Wrong);
+			else
+			{
+                console.log("Inform the Player, I Won");
+			}
+        }
+    }
+    
+    function replyCheck(isWin)
+    {
+        var requestObject = {
+      		url: EzWebGameURL + "Exec/Reply/" + isWin + "/",
+       	};
+        request.send(requestObject, doneRequest);
+        function doneRequest(data)
+        {
+            console.debug(data);
+            data = JSON.parse(data);
+            request.receiveKey(data.cKey);
+            if(data.Wrong)alert(data.Wrong);
+			else
+			{
+                console.log("Reply The Player is or isn't Win");
+			}
+        }
     }
     
     return {
@@ -363,7 +412,8 @@ var EzWebGame = (function(){
 		isTurnSelf: isTurnSelf,
         getNowTurnUserOrder:getNowTurnUserOrder,
         getUserTurnOrder:getUserTurnOrder,
-		
+		getUserId:getUserId,
+        
         // User
         login: login,
         logout: logout,
@@ -380,6 +430,7 @@ var EzWebGame = (function(){
         // Exec
         doStep: sendMessage,
         finishStep: nextRound,
-        finishGame: arriveFinalStep
+        finishGame: arriveFinalStep,
+        replyCheck: replyCheck
     }
 })();

@@ -81,6 +81,27 @@ var EzWebEvent = (function(){
         }
     }
     
+    function receiveCheckWinEvent(arriveId)
+    {
+        EzWebGame.replyCheck(isWin(arriveId));
+    }
+    
+    function someoneFinishGameEvent(user)
+    {
+        showMessage(user.userName + " Finish Game");
+    }
+    
+    function gameFinishEvent(rank)
+    {
+        console.debug(rank);
+        var message = "";
+        for(var i=0;i<rank.length;i++)
+        {
+            message += "#" + (i+1) + "\t\t" + rank[i].userName + "\n";
+        }
+        showCheckMessage(message);
+    }
+    
     return {
         // 登入遊戲
         onLoginSuccess: loginSuccessEvent,
@@ -99,7 +120,10 @@ var EzWebEvent = (function(){
 		
         // 遊戲中
 		onChangeTrun: changeTurnEvent,
-        onReceiveStep: receiveStepEvent
+        onReceiveStep: receiveStepEvent,
+        onCheckWin: receiveCheckWinEvent,
+        onAccomplishGame: someoneFinishGameEvent,
+        onGameFinish: gameFinishEvent
     }
 })();
 
