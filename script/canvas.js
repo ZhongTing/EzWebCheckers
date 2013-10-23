@@ -122,7 +122,44 @@ function showPlaceToMoveEffect()
 }
 function isWin(userId)
 {
-    return true;
+    var playerNumber = EzWebGame.getUserTurnOrder(userId);
+    
+    switch(playerNumber)
+    {
+        case 0:
+            //定義紅色領地0,                     TipPoint{2,2}   move down & leftup
+            return checkPlayer({x:2,y:2},  "down","leftup",-1,0);
+        case 1:
+            //定義黃色領地1,                     TipPoint{2,-4}  move leftup & right
+            return checkPlayer({x:2,y:-4}, "leftup","right",-1,1);
+        case 2:
+            //定義綠色領地2,                     TipPoint{-4,-2} move right & down
+            return checkPlayer({x:-4,y:2}, "right","down",-1,2);
+    }
+    
+    function checkPlayer(TipPoint, leftDirection, rightDirection, playerNumber)
+    {
+        for(var i=0; i<3; i++)
+        {
+            for(var j=0; j<=i; j++)
+            {
+                var tempPoint = {x:TipPoint.x, y:TipPoint.y};
+                //move leftDirection
+                for(var k=0; k<i; k++)
+                {
+                    tempPoint = getMovePoint(leftDirection, tempPoint);
+                }
+                //move rightDirection
+                for(var k=0; k<j; k++)
+                {
+                    tempPoint = getMovePoint(rightDirection, tempPoint);
+                }
+                if(tempPoint.player != playerNumber)
+                    return false;
+            }
+        }
+        return true;
+    }
 }
 
 function displaySelectCheckerEffect(point)

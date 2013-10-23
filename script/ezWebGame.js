@@ -293,9 +293,9 @@ var EzWebGame = (function(){
         return request.getUserId();
     }
     
-    function getUserTurnOrder()
+    function getUserTurnOrder(userId)
     {
-        var userId = request.getUserId();
+        userId = userId || request.getUserId();
         for(var order in gamePlayers)
             if(gamePlayers[order].userId == userId)
 				return order;
