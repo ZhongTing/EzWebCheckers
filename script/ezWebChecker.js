@@ -93,7 +93,13 @@ var EzWebEvent = (function(){
     
     function gameFinishEvent(rank)
     {
-        console.log(rank);
+        console.debug(rank);
+        var message = "";
+        for(var i=0;i<rank.length;i++)
+        {
+            message += "#" + (i+1) + "\t\t" + rank[i].userName + "\n";
+        }
+        showCheckMessage(message);
     }
     
     return {
