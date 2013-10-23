@@ -113,6 +113,7 @@ function showPlaceToMoveEffect()
 }
 function displaySelectCheckerEffect(point)
 {
+    gameEffectLayer.removeChildren();
     var selectEffectLayer = new Kinetic.Rect({
         x: 194,
         y: 0,
@@ -121,10 +122,14 @@ function displaySelectCheckerEffect(point)
         height: stage.getHeight(),
         opacity :0.3
     });
-    selectEffectLayer.on('click',function(){
-        gameEffectLayer.removeChildren();
-        gameEffectLayer.clear().draw();
-    });
+    if(EzWebGame.isTurnSelf())
+    {
+        selectEffectLayer.on('click',function(){
+            EzWebGame.doStep(JSON.stringify({"Method":"CancelSelect"}));
+            gameEffectLayer.removeChildren();
+            gameEffectLayer.clear().draw();
+        });
+    }
     gameEffectLayer.add(selectEffectLayer);
     gameEffectLayer.add(new Kinetic.Circle(point.circle));
     gameEffectLayer.clear().draw();
@@ -154,7 +159,7 @@ function initGame(player)
         y+=130;
     }
     stage.find('.playerZoneEffect').each(function(a){a.hide()});
-    chessPoints = getInitChessPoint();
+    chessPoints = getInitChessPoint(player.length);
     test();
 }
 

@@ -74,6 +74,10 @@ var EzWebEvent = (function(){
             case 'MoveTo':
                 moveCheckerTo(getPoint(step.Point, chessPoints));
                 break;
+            case 'CancelSelect':
+                gameEffectLayer.removeChildren();
+                gameEffectLayer.clear().draw();
+                break;
         }
     }
     

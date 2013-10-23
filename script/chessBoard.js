@@ -1,11 +1,12 @@
 var chessBoardCenter = {x:393.5,y:207};
 var chessBoardGridEdge = 45;
-var chessPoints = getInitChessPoint();
+var chessPoints;
 var userCheckerColors = ["red","yellow","green"];
 var selectedChecker;
 
-function getInitChessPoint()
+function getInitChessPoint(number)
 {
+    console.log("PlayerNum: " + number);
     var point = {};
     var moveDirection = getMoveDirection();
     
@@ -22,7 +23,7 @@ function getInitChessPoint()
     setPlayerAndDomain({x:2,y:2},  "down","leftup",-1,0);
     
     //定義綠色領地2 & player 2 所在之地, TipPoint{4,-2}  move left & up
-    setPlayerAndDomain({x:4,y:-2}, "left","up",2,2);
+    setPlayerAndDomain({x:4,y:-2}, "left","up",number==3?2:-1,2);
     
     //定義黃色領地1,                     TipPoint{2,-4}  move leftup & right
     setPlayerAndDomain({x:2,y:-4}, "leftup","right",-1,1);

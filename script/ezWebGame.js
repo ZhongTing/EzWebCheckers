@@ -65,7 +65,7 @@ var EzWebGame = (function(){
 							EzWebEventCalls(EzWebEvent.onRoomChanged, events[i]["Param"]);
 							break;
 						case 'start':
-							//gamePlayers = events[i].["Param"].Players;
+							gamePlayers = events[i]["Param"].Players;
 							EzWebEventCalls(EzWebEvent.onRoomStarted, events[i]["Param"]);
 							break;
 						case 'turn':
