@@ -161,25 +161,29 @@ function initGame(player)
 
 function displayTurns(player)
 {
-    var labelWidth = stage.getWidth();
-    var turnLabel = newLabel(-labelWidth,stage.getHeight()/2,player.userName+"' turn.",labelWidth,50);
-    gameEffectLayer.add(turnLabel);
-    gameEffectLayer.clear().draw();
+    showMessage(player.userName+"' turn.");
     
     stage.find('.playerZoneEffect').each(function(a){a.hide()});
     stage.find('#'+player.userId)[0].show();
     gameLayer.clear().draw();
+}
+function showMessage(message)
+{
+    var labelWidth = stage.getWidth();
+    var turnLabel = newLabel(-labelWidth,stage.getHeight()/2,message,labelWidth,50);
+    gameEffectLayer.add(turnLabel);
+    gameEffectLayer.clear().draw();
     
     var anim = new Kinetic.Animation(function(frame) {
         var period = 5000;
-        if(frame.time >=period/2)
+        var scale = Math.cos(frame.time * 2 * Math.PI / period) * 10+1; 
+        var x = turnLabel.getX()+scale;
+        if(turnLabel.getX()+turnLabel.getWidth()<=10&&frame.time>period/2)
         {
             this.stop();
             gameEffectLayer.removeChildren();
             gameEffectLayer.clear();
         }
-        var scale = Math.cos(frame.time * 2 * Math.PI / period) * 10+10; 
-        var x = turnLabel.getX()+scale;
         turnLabel.setX(x);
     }, gameEffectLayer);
     anim.start();
