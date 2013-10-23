@@ -124,6 +124,7 @@ function initGame(player)
         gameLayer.add(newNowPlayerEffect(20-2,y-4,150+4,110+4,'blue',player[i].userId));
         y+=130;
     }
+    stage.find('.playerZoneEffect').each(function(a){a.hide()});
     chessPoints = getInitChessPoint();
     test();
 }
@@ -139,7 +140,7 @@ displayTurns({userId:1,userName:'test'})
 function displayTurns(player)
 {
     var labelWidth = stage.getWidth();
-    var turnLabel = newLabel(-labelWidth,stage.getHeight()/2,player.userName,labelWidth,50);
+    var turnLabel = newLabel(-labelWidth,stage.getHeight()/2,player.userName+"' turn.",labelWidth,50);
     gameEffectLayer.add(turnLabel);
     gameEffectLayer.clear().draw();
     
