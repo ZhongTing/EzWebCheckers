@@ -139,7 +139,7 @@ var EzWebGame = (function(){
 						EzWebEventCalls(EzWebEvent.onRoomChanged, events[i]["Param"]);
 						break;
 					case 'start':
-						EzWebEventCalls(EzWebEvent.onRoomStarted);
+						EzWebEventCalls(EzWebEvent.onRoomStarted, events[i]["Param"]);
 						break;
 					case 'turn':
 						var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
@@ -175,7 +175,7 @@ var EzWebGame = (function(){
             if(data.Wrong)alert(data.Wrong);
 			else
 			{
-				EzWebEventCalls(EzWebEvent.onRoomStarted);
+				EzWebEventCalls(EzWebEvent.onRoomStarted, {"Players":data.Players});
 			}
         });
 	}
