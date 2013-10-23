@@ -88,6 +88,10 @@ var EzWebGame = (function(){
                                 EzWebEventCalls(EzWebEvent.onAccomplishGame, param);
                             }
                             break;
+                        case 'rank':
+                            var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
+                            EzWebEventCalls(EzWebEvent.onGameFinish, param);
+                            break;
 						default:
 							console.log(new Date() + "=> " + events[i]["Type"] + ':' + events[i]["Param"]);
 					}

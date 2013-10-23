@@ -91,7 +91,7 @@ var EzWebEvent = (function(){
         showMessage(user.userName + " Finish Game");
     }
     
-    function GameFinishEvent(rank)
+    function gameFinishEvent(rank)
     {
         console.log(rank);
     }
@@ -117,7 +117,7 @@ var EzWebEvent = (function(){
         onReceiveStep: receiveStepEvent,
         onCheckWin: receiveCheckWinEvent,
         onAccomplishGame: someoneFinishGameEvent,
-        onGameFinish: GameFinishEvent
+        onGameFinish: gameFinishEvent
     }
 })();
 
