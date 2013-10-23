@@ -72,8 +72,10 @@ function test()
             y: p.y,
             radius: 15,
             fill: userCheckerColors[chessPoints[i].player],
-            stroke: 'black',
-            //strokeWidth: 1,
+            //stroke: chessPoints[i].player>=0?'black':'',
+            shadowColor:'black',
+            shadowOffset:3,
+            //strokeWidth: chessPoints[i].player>=0?2:''
         });
         c.attrs.point = chessPoints[i];
         c.on('mousemove',function(event){

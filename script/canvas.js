@@ -66,20 +66,19 @@ function clickChecker(point)
     {
         EzWebGame.doStep(JSON.stringify({"Method":"Select", "Point":{x:point.x,y:point.y}}));
         selectedChecker = point;
-        displayPlaceToMove(point);    
+        displaySelectCheckerEffect(point);
+        displayPlaceToMove(point);
     }
 }
 
 function displayPlaceToMove(point)
 {
-    gameEffectLayer.removeChildren();
     findAndRecordOnBoard(point);
-    showEffect();
+    showPlaceToMoveEffect();
 }
 
-function showEffect()
+function showPlaceToMoveEffect()
 {
-    gameEffectLayer.removeChildren();
     var moveDirection = getMoveDirection();
     for(var i in chessPoints)
     {
@@ -89,7 +88,7 @@ function showEffect()
             x: p.x,
             y: p.y,
             radius: 15,
-            fill: 'black',
+            fill: 'white',
             stroke: 'black',
             //strokeWidth: 1,
         });
@@ -111,6 +110,24 @@ function showEffect()
     }
     gameEffectLayer.clear();
     gameEffectLayer.draw();
+}
+function displaySelectCheckerEffect(point)
+{
+    var selectEffectLayer = new Kinetic.Rect({
+        x: 194,
+        y: 0,
+        fill: 'black',
+        width: stage.getWidth(),
+        height: stage.getHeight(),
+        opacity :0.3
+    });
+    selectEffectLayer.on('click',function(){
+        gameEffectLayer.removeChildren();
+        gameEffectLayer.clear().draw();
+    });
+    gameEffectLayer.add(selectEffectLayer);
+    gameEffectLayer.add(new Kinetic.Circle(point.circle));
+    gameEffectLayer.clear().draw();
 }
 function moveCheckerTo(point)
 {
