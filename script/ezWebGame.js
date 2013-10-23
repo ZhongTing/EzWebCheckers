@@ -204,6 +204,33 @@ var EzWebGame = (function(){
         }
     }
     
+    function nextRound()
+    {
+        $.ajax({
+      		url: EzWebGameURL + "Exec/NextRound/" + Key 
+       	}).done(function(data) {
+      		console.log(data);
+            data = JSON.parse(data);
+            Key = data.cKey;
+            if(data.Wrong)alert(data.Wrong);
+			else
+			{
+                TurnId = data.NextRound.userId;
+				EzWebEventCalls(EzWebEvent.onChangeTrun, data.NextRound);
+			}
+        });
+    }
+    
+    function sendMessage()
+    {
+        
+    }
+    
+    function arriveFinalStep()
+    {
+        
+    }
+    
     return {
         // Prototype
         cKey: onReceiveFirstCKey,
@@ -221,8 +248,11 @@ var EzWebGame = (function(){
         createGameRoom: createRoom,
         leaveGameRoom: leaveRoom,
         joinGameRoom: joinRoom,
-		startGameRoom: startRoom
+		startGameRoom: startRoom,
 		
         // Exec
+        doStep: sendMessage,
+        finishStep: nextRound,
+        finishGame: arriveFinalStep
     }
 })();

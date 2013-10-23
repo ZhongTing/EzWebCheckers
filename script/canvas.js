@@ -111,7 +111,9 @@ function moveCheckerTo(point)
     gameLayer.clear();
     gameLayer.draw();
     
+    //判定獲勝
     //結束回合
+    EzWebGame.finishStep();
 }
 function initGame(player)
 {
