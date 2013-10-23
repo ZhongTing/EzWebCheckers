@@ -86,7 +86,8 @@ function findAndRecordOnBoard(point)
     var jumpStack = [];
     var sureStack = [];
     var moveDirection = getMoveDirection();
-    var tChessPoints = chessPoints;
+    var tChessPoints = cloneChessPoint(chessPoints);
+    console.log(tChessPoints);
     var selectedPoint = getPoint(point, chessPoints);
     
     var chessPoint;
@@ -204,19 +205,30 @@ function getMoveDirection()
     return ["up", "right", "rightdown", "down", "left", "leftup"];
 }
 
-function deepClone(destination, source)
+function cloneChessPoint(source)
 {
-    for (var property in source)
+    var destination = {};
+    var tag = ["x", "y", "player", "domain"];
+    for(var i in source)
     {
-        if (typeof source[property] === "object" && source[property] !== null )
+        destination[i] = {};
+        for (var property in tag)
         {
-            destination[property] = destination[property] || {};
-            arguments.callee(destination[property], source[property]);
-        } 
-        else 
-        {
-            destination[property] = source[property];
+            destination[i][tag[property]] = deepCopy(source[i][tag[property]]);
         }
     }
     return destination;
-};
+}
+
+function deepCopy(obj)
+{
+    if(obj == null || typeof(obj) !== 'object'){
+        return obj;
+    }
+    //make sure the returned object has the same prototype as the original
+    var ret = obj.constructor();
+    for(var key in obj){
+        ret[key] = deepCopy(obj[key]);
+    }
+    return ret;
+}

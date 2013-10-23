@@ -81,11 +81,6 @@ function showEffect()
     var moveDirection = getMoveDirection();
     for(var i in chessPoints)
     {
-        for(var j in moveDirection)
-        {
-            delete chessPoints[i][moveDirection[j]];
-        }
-        
         if(!chessPoints[i].computed)continue;
         var p = gridXyToXy(chessPoints[i]);
         var c = new Kinetic.Circle({
