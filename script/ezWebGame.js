@@ -2,6 +2,8 @@ var EzWebGame = (function(){
     var EzWebGameURL = "http://127.0.0.1/GameRound/";
     var LocalLoginURL = "./login.php";
     var TurnId = 0;
+	var gamePlayers = [];//遊戲開始的玩家
+	
 	var request = (function(){
         var queue = [];
         var Key = '';
@@ -46,43 +48,44 @@ var EzWebGame = (function(){
         function openSSE()
         {
             eventSSE = new EventSource(EzWebGameURL + 'Event/Request/' + LastKey);
-    		console.log('openRequest()');
-            
-    		eventSSE.onmessage = function (event) {
-    			console.log(event.data);
-    			events = JSON.parse(event.data).Events;
-                //console.log(new Date() + ": " + event.data);
-    			for(var i=0; i<events.length ; i++)
-    			{
-    				switch(events[i]["Type"])
-    				{
-    					case 'RefreshRoomList':
-    						EzWebEventCalls(EzWebEvent.onListRoomDone, events[i]["Param"]);
-    						break;
-    					case 'roomChanged':
-    						EzWebEventCalls(EzWebEvent.onRoomChanged, events[i]["Param"]);
-    						break;
-    					case 'start':
-    						EzWebEventCalls(EzWebEvent.onRoomStarted, events[i]["Param"]);
-    						break;
-    					case 'turn':
-    						var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
-                            TurnId = param.userId;
-    						EzWebEventCalls(EzWebEvent.onChangeTrun, param);
-    						break;
-                        case 'message':
-    				        EzWebEventCalls(EzWebEvent.onReceiveStep, events[i]["Param"]);
-                            break;
-    					default:
-    						console.log(new Date() + "=> " + events[i]["Type"] + ':' + events[i]["Param"]);
-    				}
-    			}
-    		};
-    		eventSSE.onerror = function (event) {
-    			console.log('eventSSE Error');
-    			event.target.close();
-    			openRequest();
-    		}
+			console.log('openRequest()');
+			
+			eventSSE.onmessage = function (event) {
+				console.log(event.data);
+				events = JSON.parse(event.data).Events;
+				//console.log(new Date() + ": " + event.data);
+				for(var i=0; i<events.length ; i++)
+				{
+					switch(events[i]["Type"])
+					{
+						case 'RefreshRoomList':
+							EzWebEventCalls(EzWebEvent.onListRoomDone, events[i]["Param"]);
+							break;
+						case 'roomChanged':
+							EzWebEventCalls(EzWebEvent.onRoomChanged, events[i]["Param"]);
+							break;
+						case 'start':
+							//gamePlayers = events[i].["Param"].Players;
+							EzWebEventCalls(EzWebEvent.onRoomStarted, events[i]["Param"]);
+							break;
+						case 'turn':
+							var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
+							TurnId = param.userId;
+							EzWebEventCalls(EzWebEvent.onChangeTrun, param);
+							break;
+						case 'message':
+							EzWebEventCalls(EzWebEvent.onReceiveStep, events[i]["Param"]);
+							break;
+						default:
+							console.log(new Date() + "=> " + events[i]["Type"] + ':' + events[i]["Param"]);
+					}
+				}
+			};
+			eventSSE.onerror = function (event) {
+				console.log('eventSSE Error');
+				event.target.close();
+				openRequest();
+			}
         }
         
         function closeSSE()
@@ -264,6 +267,7 @@ var EzWebGame = (function(){
 			else
 			{
 				EzWebEventCalls(EzWebEvent.onRoomStarted, {"Players":data.Players});
+                gamePlayers = data.Players;
 			}
         }
 	}
@@ -273,6 +277,21 @@ var EzWebGame = (function(){
         return request.getUserId();
     }
     
+    function getUserTurnOrder()
+    {
+        var userId = request.getUserId();
+        for(var order in gamePlayers)
+            if(gamePlayers[order].userId == userId)
+				return order;
+    }
+	
+    function getNowTurnUserOrder()
+    {
+        for(var order in gamePlayers)
+            if(gamePlayers[order].userId == TurnId)
+				return order;
+    }
+	
     function isTurnSelf()
     {
         return TurnId == getUserId();
@@ -342,7 +361,9 @@ var EzWebGame = (function(){
         cKey: onReceiveFirstCKey,
         openSSE: openRequest,
 		isTurnSelf: isTurnSelf,
-        
+        getNowTurnUserOrder:getNowTurnUserOrder,
+        getUserTurnOrder:getUserTurnOrder,
+		
         // User
         login: login,
         logout: logout,

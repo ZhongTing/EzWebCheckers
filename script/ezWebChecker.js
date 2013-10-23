@@ -68,6 +68,7 @@ var EzWebEvent = (function(){
         {
             case 'Select':
                 selectedChecker = getPoint(step.Point, chessPoints);
+                displaySelectCheckerEffect(selectedChecker);
                 displayPlaceToMove(selectedChecker);
                 break;
             case 'MoveTo':
