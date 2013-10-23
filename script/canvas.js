@@ -31,6 +31,7 @@ function turnToGameLayer()
 }
 function refreshRoomInfoLayer(room)
 {
+    roomInfoLayer.removeChildren();
     roomInfoLayer.add(newLabel(0,10,room.title,stage.getWidth()-10,30));
     roomInfoLayer.add(newLabel(stage.getWidth()-210,60,'MaxPlayer: '+room.max,200,20));
     roomInfoLayer.show().draw();
@@ -126,24 +127,7 @@ function isWin(userId)
 
 function displaySelectCheckerEffect(point)
 {
-    gameEffectLayer.removeChildren();
-    var selectEffectLayer = new Kinetic.Rect({
-        x: 194,
-        y: 0,
-        fill: 'black',
-        width: stage.getWidth(),
-        height: stage.getHeight(),
-        opacity :0.3
-    });
-    if(EzWebGame.isTurnSelf())
-    {
-        selectEffectLayer.on('click',function(){
-            EzWebGame.doStep(JSON.stringify({"Method":"CancelSelect"}));
-            gameEffectLayer.removeChildren();
-            gameEffectLayer.clear().draw();
-        });
-    }
-    gameEffectLayer.add(selectEffectLayer);
+    greyBackgroundEffect(gameEffectLayer,null,194);
     gameEffectLayer.add(new Kinetic.Circle(point.circle));
     gameEffectLayer.clear().draw();
 }
@@ -172,32 +156,65 @@ function initGame(player)
         y+=130;
     }
     stage.find('.playerZoneEffect').each(function(a){a.hide()});
-    chessPoints = getInitChessPoint(player.length);
+    chessPoints = getInitChessPoint();
     test();
 }
 
 function displayTurns(player)
 {
-    var labelWidth = stage.getWidth();
-    var turnLabel = newLabel(-labelWidth,stage.getHeight()/2,player.userName+"' turn.",labelWidth,50);
-    gameEffectLayer.add(turnLabel);
-    gameEffectLayer.clear().draw();
-    
+    showMessage(player.userName+"' turn.");
     stage.find('.playerZoneEffect').each(function(a){a.hide()});
     stage.find('#'+player.userId)[0].show();
     gameLayer.clear().draw();
+}
+
+function showMessage(message)
+{
+    var labelWidth = stage.getWidth();
+    var turnLabel = newLabel(-labelWidth,stage.getHeight()/2,message,labelWidth,50);
+    gameEffectLayer.add(turnLabel);
+    gameEffectLayer.clear().draw();
     
     var anim = new Kinetic.Animation(function(frame) {
         var period = 5000;
-        if(frame.time >=period/2)
+        var scale = Math.cos(frame.time * 2 * Math.PI / period) * 10+1; 
+        var x = turnLabel.getX()+scale;
+        if(turnLabel.getX()+turnLabel.getWidth()<=10&&frame.time>period/2)
         {
             this.stop();
             gameEffectLayer.removeChildren();
             gameEffectLayer.clear();
         }
-        var scale = Math.cos(frame.time * 2 * Math.PI / period) * 10; 
-        var x = turnLabel.getX()+scale;
         turnLabel.setX(x);
     }, gameEffectLayer);
     anim.start();
+}
+function greyBackgroundEffect(layer,callBack,x)
+{
+    var selectEffectLayer = new Kinetic.Rect({
+        x: x,
+        y: 0,
+        fill: 'black',
+        width: stage.getWidth(),
+        height: stage.getHeight(),
+        opacity :0.3
+    });
+    selectEffectLayer.on('click',function(){
+        layer.removeChildren();
+        layer.clear().draw();
+        if(callBack)callBack();
+    });
+    gameEffectLayer.add(selectEffectLayer);
+}
+function showCheckMessage(message,callBack)
+{
+    var textField = newButton(0,stage.getHeight()/2,message,stage.getWidth(),30);
+    textField.on('click',function(){
+        gameEffectLayer.removeChildren();
+        gameEffectLayer.clear().draw();
+        if(callBack)callBack();
+    })
+    greyBackgroundEffect(gameEffectLayer,callBack);
+    gameEffectLayer.add(textField);
+    gameEffectLayer.clear().draw();
 }
