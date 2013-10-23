@@ -64,16 +64,19 @@ function clickChecker(point)
 {
     if(point.player>=0 && EzWebGame.isTurnSelf())
     {
+        EzWebGame.doStep(JSON.stringify({"Method":"Select", "Point":{x:point.x,y:point.y}}));
         selectedChecker = point;
-        displayPlaceToMove(event.targetNode.attrs.point);    
+        displayPlaceToMove(point);    
     }
 }
+
 function displayPlaceToMove(point)
 {
     gameEffectLayer.removeChildren();
     findAndRecordOnBoard(point);
     showEffect();
 }
+
 function showEffect()
 {
     gameEffectLayer.removeChildren();
@@ -91,7 +94,18 @@ function showEffect()
             //strokeWidth: 1,
         });
         c.attrs.point = chessPoints[i];
-        c.on('click',function(evt){moveCheckerTo(evt.targetNode.attrs.point)});
+        if(EzWebGame.isTurnSelf())
+        {
+            c.on('click',function(evt){
+                var point = evt.targetNode.attrs.point;
+                EzWebGame.doStep(JSON.stringify({"Method":"MoveTo", "Point":{x:point.x,y:point.y}}));
+                moveCheckerTo(point);
+    
+                //判定獲勝
+                //結束回合
+                EzWebGame.finishStep();
+            });
+        }
         gameEffectLayer.add(c);
         delete chessPoints[i].computed;
     }
@@ -110,10 +124,6 @@ function moveCheckerTo(point)
     selectedChecker = null;
     gameLayer.clear();
     gameLayer.draw();
-    
-    //判定獲勝
-    //結束回合
-    EzWebGame.finishStep();
 }
 function initGame(player)
 {
