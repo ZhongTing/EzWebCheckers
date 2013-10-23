@@ -86,6 +86,16 @@ var EzWebEvent = (function(){
         EzWebGame.replyCheck(isWin(arriveId));
     }
     
+    function someoneFinishGameEvent(user)
+    {
+        showMessage(user.userName + " Finish Game");
+    }
+    
+    function GameFinishEvent(rank)
+    {
+        console.log(rank);
+    }
+    
     return {
         // 登入遊戲
         onLoginSuccess: loginSuccessEvent,
@@ -105,7 +115,9 @@ var EzWebEvent = (function(){
         // 遊戲中
 		onChangeTrun: changeTurnEvent,
         onReceiveStep: receiveStepEvent,
-        onCheckWin: receiveCheckWinEvent
+        onCheckWin: receiveCheckWinEvent,
+        onAccomplishGame: someoneFinishGameEvent,
+        onGameFinish: GameFinishEvent
     }
 })();
 

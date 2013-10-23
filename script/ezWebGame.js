@@ -80,6 +80,14 @@ var EzWebGame = (function(){
                             var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
 							EzWebEventCalls(EzWebEvent.onCheckWin, param.WinnerId);
                             break;
+                        case 'arrived':
+                            console.debug(events[i]["Param"]);
+                            if(events[i]["Param"]!="Cheat")
+                            {
+                                var param = JSON.parse(events[i]["Param"].replace("\\\"","\""));
+                                EzWebEventCalls(EzWebEvent.onAccomplishGame, param);
+                            }
+                            break;
 						default:
 							console.log(new Date() + "=> " + events[i]["Type"] + ':' + events[i]["Param"]);
 					}
