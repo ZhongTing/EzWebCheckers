@@ -49,7 +49,8 @@ roomLayer.add(leaveRoomLabel).add(startLabel);
 
 //GameLayer
 var text = newText(20,0,'');
-var text2 = newText(20,50,'');
+var text2 = newText(320,50,'');
+
 gameLayer.add(text).add(text2);
 newImage(195,5,400,400,'./chess.jpg',chessBoardLayer,function(image){
     image.on('mousemove', function(evt) {

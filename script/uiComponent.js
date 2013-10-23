@@ -71,10 +71,10 @@ function newImage(X,Y,Width,Height,Src,layer,onLoadFunc)
 }
 function newPlayerZone(X,Y,Width,Height,PlayerName,Src,layer)
 {
+    var shortSide = Width>Height?Height:Width;
     var label = new Kinetic.Label({
         x: X,
         y: Y,
-        opacity: 0.75,
     });
     label.add(new Kinetic.Tag({
         fill: 'white',
@@ -86,8 +86,8 @@ function newPlayerZone(X,Y,Width,Height,PlayerName,Src,layer)
         width:Width,
         height:Height
     }));
-    layer.add(label).add(newLabel(X,Y+Height,PlayerName,Width,20));
-    newImage(X,Y,Width,Width,Src,layer);
+    layer.add(label).add(newLabel(X,Y+shortSide,PlayerName,Width,20));
+    newImage(X+(Width-shortSide)/2,Y,shortSide,shortSide,Src,layer);
 }
 function newLobbyRoomZone(X,Y,Width,Height,RoomInfo,layer)
 {
