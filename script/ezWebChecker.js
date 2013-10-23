@@ -49,7 +49,7 @@ var EzWebEvent = (function(){
         refreshPlayersInRoomInfoLayer(roomInfo.Players);
     }
     
-	function roomStartdEvent()
+	function roomStartdEvent(roomInfo)
 	{
 		turnToGameLayer();
 	}

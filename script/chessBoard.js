@@ -33,11 +33,11 @@ function getInitChessPoint()
     {
         tempPoint = getMovePoint(moveDirection[i],CenterPoint);
         tempPoint.player=-1;
-        tempPoint.domain={x:-1};
+        tempPoint.domain=[-1];
         point[tempPoint.x+","+tempPoint.y] = tempPoint;
     }
     CenterPoint.player=-1;
-    CenterPoint.domain={x:-1};
+    CenterPoint.domain=[-1];
     point[CenterPoint.x+","+CenterPoint.y] = CenterPoint;
     
     return point;
@@ -61,7 +61,11 @@ function getInitChessPoint()
                 }
                 tempPoint = point[tempPoint.x+","+tempPoint.y] == undefined ? tempPoint : point[tempPoint.x+","+tempPoint.y];
                 tempPoint.player = tempPoint.player == undefined || tempPoint.player == -1 ? playerNumber : tempPoint.player;
-                tempPoint.domain = tempPoint.domain == undefined ? {x:domain} : {x:tempPoint.domain.x,y:domain}; 
+                //tempPoint.domain = tempPoint.domain == undefined ? {x:domain} : {x:tempPoint.domain.x,y:domain}; 
+                if(tempPoint.domain)
+                    tempPoint.domain.push(domain);
+                else
+                    tempPoint.domain = [domain];
                 //console.log(i + ", " + j + ": ");console.log(tempPoint);
                 point[tempPoint.x+","+tempPoint.y] = tempPoint;
             }
@@ -86,10 +90,10 @@ function findAndRecordOnBoard(point)
     var jumpStack = [];
     var sureStack = [];
     var moveDirection = getMoveDirection();
-    var tChessPoints = cloneChessPoint(chessPoints);
-    console.log(tChessPoints);
+    var tChessPoints = cloneChessPoint(chessPoints, ["x", "y", "player", "domain"]);
     var selectedPoint = getPoint(point, chessPoints);
     
+    //console.log(tChessPoints);
     var chessPoint;
     for(var i=0; i<6; i++)
     {// 對選到的點 往六個方向探詢 是否可以走
@@ -167,10 +171,11 @@ function jump_recursive(jumpStack, sureStack, moveDirection, tChessPoints)
 
 function isPointDomainBelongPlayer(point, playerNumber)
 {
-    if(point.domain.x == -1 || point.domain.x == playerNumber || point.domain.y == playerNumber)
-    {
+    if(point.domain[0] == -1)
         return true;
-    }    
+    for(var i in point.domain)
+        if(point.domain[i] == playerNumber)
+            return true;
     return false;
 }
 
@@ -205,10 +210,9 @@ function getMoveDirection()
     return ["up", "right", "rightdown", "down", "left", "leftup"];
 }
 
-function cloneChessPoint(source)
+function cloneChessPoint(source, tag)
 {
     var destination = {};
-    var tag = ["x", "y", "player", "domain"];
     for(var i in source)
     {
         destination[i] = {};
@@ -227,7 +231,8 @@ function deepCopy(obj)
     }
     //make sure the returned object has the same prototype as the original
     var ret = obj.constructor();
-    for(var key in obj){
+    for(var key in obj)
+    {
         ret[key] = deepCopy(obj[key]);
     }
     return ret;
