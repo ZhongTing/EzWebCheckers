@@ -81,6 +81,11 @@ var EzWebEvent = (function(){
         }
     }
     
+    function receiveCheckWinEvent(arriveId)
+    {
+        EzWebGame.replyCheck(isWin(arriveId));
+    }
+    
     return {
         // 登入遊戲
         onLoginSuccess: loginSuccessEvent,
@@ -99,7 +104,8 @@ var EzWebEvent = (function(){
 		
         // 遊戲中
 		onChangeTrun: changeTurnEvent,
-        onReceiveStep: receiveStepEvent
+        onReceiveStep: receiveStepEvent,
+        onCheckWin: receiveCheckWinEvent
     }
 })();
 

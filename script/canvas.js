@@ -101,8 +101,16 @@ function showPlaceToMoveEffect()
                 moveCheckerTo(point);
     
                 //判定獲勝
-                //結束回合
-                EzWebGame.finishStep();
+                if(isWin(EzWebGame.getUserId()))
+                {//告知其他人 自己獲勝遊戲
+                    EzWebGame.finishGame();
+                }
+                else
+                {//結束回合
+                    EzWebGame.finishStep();
+                }
+                
+                
             });
         }
         gameEffectLayer.add(c);
@@ -111,6 +119,11 @@ function showPlaceToMoveEffect()
     gameEffectLayer.clear();
     gameEffectLayer.draw();
 }
+function isWin(userId)
+{
+    return true;
+}
+
 function displaySelectCheckerEffect(point)
 {
     gameEffectLayer.removeChildren();
