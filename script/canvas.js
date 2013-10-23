@@ -114,19 +114,7 @@ function showPlaceToMoveEffect()
 }
 function displaySelectCheckerEffect(point)
 {
-    var selectEffectLayer = new Kinetic.Rect({
-        x: 194,
-        y: 0,
-        fill: 'black',
-        width: stage.getWidth(),
-        height: stage.getHeight(),
-        opacity :0.3
-    });
-    selectEffectLayer.on('click',function(){
-        gameEffectLayer.removeChildren();
-        gameEffectLayer.clear().draw();
-    });
-    gameEffectLayer.add(selectEffectLayer);
+    greyBackgroundEffect(gameEffectLayer,null,194);
     gameEffectLayer.add(new Kinetic.Circle(point.circle));
     gameEffectLayer.clear().draw();
 }
@@ -162,7 +150,6 @@ function initGame(player)
 function displayTurns(player)
 {
     showMessage(player.userName+"' turn.");
-    
     stage.find('.playerZoneEffect').each(function(a){a.hide()});
     stage.find('#'+player.userId)[0].show();
     gameLayer.clear().draw();
@@ -188,4 +175,33 @@ function showMessage(message)
         turnLabel.setX(x);
     }, gameEffectLayer);
     anim.start();
+}
+function greyBackgroundEffect(layer,callBack,x)
+{
+    var selectEffectLayer = new Kinetic.Rect({
+        x: x,
+        y: 0,
+        fill: 'black',
+        width: stage.getWidth(),
+        height: stage.getHeight(),
+        opacity :0.3
+    });
+    selectEffectLayer.on('click',function(){
+        layer.removeChildren();
+        layer.clear().draw();
+        if(callBack)callBack();
+    });
+    gameEffectLayer.add(selectEffectLayer);
+}
+function showCheckMessage(message,callBack)
+{
+    var textField = newButton(0,stage.getHeight()/2,message,stage.getWidth(),30);
+    textField.on('click',function(){
+        gameEffectLayer.removeChildren();
+        gameEffectLayer.clear().draw();
+        if(callBack)callBack();
+    })
+    greyBackgroundEffect(gameEffectLayer,callBack);
+    gameEffectLayer.add(textField);
+    gameEffectLayer.clear().draw();
 }
