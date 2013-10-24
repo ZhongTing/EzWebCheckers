@@ -230,21 +230,6 @@ var EzWebGame = (function(){
         }
     }
     
-    function listRoomPlayers()
-    {
-        var requestObject = {
-      		url: EzWebGameURL + "Room/ListRoomPlayers/"
-       	};
-        request.send(requestObject, doneRequest);
-        function doneRequest(data)
-        {
-            console.debug(data);
-            data = JSON.parse(data);
-            request.receiveKey(data.cKey);
-            if(data.Wrong)alert(data.Wrong);
-        }
-    }
-    
     function onReceiveFirstCKey(data)
     {
         if(data.Wrong!=null)
@@ -254,6 +239,7 @@ var EzWebGame = (function(){
         else
         {
             request.receiveKey(data.cKey);
+            EzWebGame.openSSE();
             EzWebEventCalls(EzWebEvent.onLoginSuccess)
         }
     }

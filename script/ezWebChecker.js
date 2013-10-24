@@ -1,7 +1,6 @@
 var EzWebEvent = (function(){
     function loginSuccessEvent()
     {
-		EzWebGame.openSSE();
         turnToLobbyLayer();
         EzWebGame.listRoomInfos();
     }
