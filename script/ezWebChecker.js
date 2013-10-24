@@ -94,12 +94,26 @@ var EzWebEvent = (function(){
     function gameFinishEvent(rank)
     {
         console.debug(rank);
-        var message = "";
+        var messages = [];
+        var maxLength = 0;
         for(var i=0;i<rank.length;i++)
         {
-            message += "#" + (i+1) + "\t\t" + rank[i].userName + "\n";
+            var message = "#" + (i+1) + "\t\t" + rank[i].userName;
+            messages.push(message);
+            if(message.length > maxLength)
+                maxLength = message.length;
         }
-        showCheckMessage(message, backToRoom);
+        
+        // 讓所有訊息等長
+        for(var i=0; i<messages.length;i++)
+        {
+            var message = messages[i];
+            for(var j=0;j<maxLength-message.length;j++)
+            {
+                messages[i] += " ";
+            }
+        }
+        showCheckMessage(messages.join("\n"), backToRoom);
         
         function backToRoom()
         {
