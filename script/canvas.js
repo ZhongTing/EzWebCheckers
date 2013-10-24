@@ -102,7 +102,7 @@ function showPlaceToMoveEffect()
                 moveCheckerTo(point);
     
                 //判定獲勝
-                if(isWin(EzWebGame.getUserId()))
+                if(isWin(EzWebGame.getUserTurnOrder(EzWebGame.getUserId())))
                 {//告知其他人 自己獲勝遊戲
                     EzWebGame.finishGame();
                 }
@@ -120,22 +120,25 @@ function showPlaceToMoveEffect()
     gameEffectLayer.clear();
     gameEffectLayer.draw();
 }
-function isWin(userId)
+function isWin(playerNumber)
 {
-    var playerNumber = EzWebGame.getUserTurnOrder(userId);
+    var defineWin = [];
     
-    switch(playerNumber)
-    {
-        case 0:
-            //定義紅色領地0,                     TipPoint{2,2}   move down & leftup
-            return checkPlayer({x:2,y:2},  "down","leftup",-1,0);
-        case 1:
-            //定義黃色領地1,                     TipPoint{2,-4}  move leftup & right
-            return checkPlayer({x:2,y:-4}, "leftup","right",-1,1);
-        case 2:
-            //定義綠色領地2,                     TipPoint{-4,-2} move right & down
-            return checkPlayer({x:-4,y:2}, "right","down",-1,2);
-    }
+    //定義紅色領地0, TipPoint{2,2}   move down & leftup
+    defineWin[0] = {TipPoint:{x:2,y:2}, dLeft:"down", dRight:"leftup"};
+    //defineWin[0] = {TipPoint:{x:-2,y:-2}, dLeft:"up", dRight:"rightdown"};
+    
+    //定義黃色領地1, TipPoint{2,-4}  move leftup & right
+    defineWin[1] = {TipPoint:{x:2,y:-4}, dLeft:"leftup", dRight:"right"};
+    //defineWin[1] = {TipPoint:{x:-2,y:4}, dLeft:"rightdown", dRight:"left"};
+    
+    //定義綠色領地2, TipPoint{-4,-2} move right & down
+    defineWin[2] = {TipPoint:{x:-4,y:2}, dLeft:"right", dRight:"down"};
+    //defineWin[2] = {TipPoint:{x:4,y:-2}, dLeft:"left", dRight:"up"};
+    
+    
+    var check = defineWin[playerNumber];
+    return checkPlayer(check.TipPoint, check.dLeft, check.dRight, playerNumber);
     
     function checkPlayer(TipPoint, leftDirection, rightDirection, playerNumber)
     {
@@ -154,6 +157,7 @@ function isWin(userId)
                 {
                     tempPoint = getMovePoint(rightDirection, tempPoint);
                 }
+                tempPoint = getPoint(tempPoint, chessPoints);
                 if(tempPoint.player != playerNumber)
                     return false;
             }
