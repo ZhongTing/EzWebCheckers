@@ -107,19 +107,17 @@ function showPlaceToMoveEffect()
             c.on('click',function(evt){
                 var point = evt.targetNode.attrs.point;
                 EzWebGame.doStep(JSON.stringify({"Method":"MoveTo", "Point":{x:point.x,y:point.y}}));
-                moveCheckerTo(point);
-    
-                //判定獲勝
-                if(isWin(EzWebGame.getUserId()))
-                {//告知其他人 自己獲勝遊戲
-                    EzWebGame.finishGame();
-                }
-                else
-                {//結束回合
-                    EzWebGame.finishStep();
-                }
-                
-                
+                moveCheckerTo(point,function(){
+                    //判定獲勝
+                    if(isWin(EzWebGame.getUserId()))
+                    {//告知其他人 自己獲勝遊戲
+                        EzWebGame.finishGame();
+                    }
+                    else
+                    {//結束回合
+                        EzWebGame.finishStep();
+                    }
+                });
             });
         }
         gameEffectLayer.add(c);
@@ -132,12 +130,6 @@ function showPreviewPath(startPoint,finalPoint)
 {
     var path = findPath(startPoint,finalPoint);
     var points = getLinePointsArray(path);
-    for(var i =0;i<path.length;i++)
-    {
-        var p = gridXyToXy(path[i]);
-        points.push(p.x);
-        points.push(p.y);
-    }
     var line = new Kinetic.Line({
         points: points,
         stroke: userCheckerColors[EzWebGame.getNowTurnUserOrder()],
@@ -170,11 +162,14 @@ function getBoardLine(fromPoint,toPoint)
 }
 function displaySelectCheckerEffect(point)
 {
-    greyBackgroundEffect(gameEffectLayer,null,194);
+    function cancel(){
+        EzWebGame.doStep(JSON.stringify({"Method":"CancelSelect", "Point":{x:point.x,y:point.y}}));    
+    }
+    greyBackgroundEffect(gameEffectLayer,cancel,194);
     gameEffectLayer.add(new Kinetic.Circle(point.circle));
     gameEffectLayer.clear().draw();
 }
-function moveCheckerTo(point)
+function moveCheckerTo(point,callBack)
 {
     gameEffectLayer.removeChildren();
     var path = findPath(selectedChecker,point);
@@ -186,11 +181,11 @@ function moveCheckerTo(point)
         strokeWidth: 5,
         lineCap: 'round',
         lineJoin: 'round',
-        id:'previewLine'
+        id:'pathLine'
     });
     gameEffectLayer.add(line);
     var anim = new Kinetic.Animation(function(frame) {
-        var period = 5000;
+        var period = 2000;
         if(frame.time>period)
         {
             anim.stop();
@@ -200,6 +195,7 @@ function moveCheckerTo(point)
             selectedChecker.circle.attrs.fill='';
             selectedChecker = null;
             gameLayer.clear().draw();
+            if(callBack)callBack();
         }
     }, gameEffectLayer);
     anim.start();
@@ -233,7 +229,8 @@ function moveCheckerTo2(point)
             selectedChecker.circle.attrs.fill='';
             selectedChecker = null;
             gameLayer.clear().draw();
-            gameEffectLayer.clear().draw();        
+            gameEffectLayer.clear().draw();
+            if(callBack)callBack();        
         }
         else
         {
@@ -291,7 +288,7 @@ function showMessage(message)
         var period = 5000;
         var scale = Math.cos(frame.time * 2 * Math.PI / period) * 10+1; 
         var x = turnLabel.getX()+scale;
-        if(turnLabel.getX()+turnLabel.getWidth()<=10&&frame.time>period/2)
+        if(turnLabel.getX()+turnLabel.getWidth()<=10&&frame.time>period/2||frame.time>period/3*4)
         {
             this.stop();
             gameEffectLayer.removeChildren();
