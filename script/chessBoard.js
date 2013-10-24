@@ -172,12 +172,14 @@ function jump_recursive(jumpStack, sureStack, moveDirection, tChessPoints)
 function findPath(startPoint,finalPoint)
 {
     var jumpStack = [];
-    var path = [startPoint];
+    var path = [];
     var moveDirection = getMoveDirection();
     var tChessPoints = cloneChessPoint(chessPoints, ["x", "y", "player", "domain"]);
     var chessPoint;
+    startPoint = cloneOnePoint(startPoint);
+    finalPoint = cloneOnePoint(finalPoint);
     for(var i=0; i<6; i++)
-    {// 對選到的點 往六個方向探詢 是否可以走
+    {
         chessPoint = getPoint(getMovePoint(moveDirection[i], startPoint), tChessPoints);
         if(!chessPoint)
         {
@@ -185,6 +187,7 @@ function findPath(startPoint,finalPoint)
         }
         else if(chessPoint.x==finalPoint.x&&chessPoint.y==finalPoint.y)
         {
+            path.push(startPoint);
             path.push(finalPoint);
             return path;
         }
@@ -196,14 +199,16 @@ function findPath_recursive(startPoint,finalPoint,path,tChessPoints)
 {
     var result = null;
     var moveDirection = getMoveDirection();
+    path = clonePointsArray(path);
     path.push(startPoint);
+    getPoint(startPoint,tChessPoints).mark = true;
     for(var i=0; i<6; i++)
-    {// 對選到的點 往六個方向探詢 是否可以走
-        var middleChecker = getMovePoint(moveDirection[i], startPoint);
+    {
+        var middleChecker = getPoint(getMovePoint(moveDirection[i], startPoint),tChessPoints);
         if(!middleChecker||middleChecker.player<0)continue;
         var moveP = getMovePoint(moveDirection[i], startPoint,true)
         chessPoint = getPoint(moveP, tChessPoints);
-        if(!chessPoint || chessPoint.mark)
+        if(!chessPoint || chessPoint.mark || chessPoint.player >=0)
         {
             continue;
         }
@@ -262,6 +267,22 @@ function getMoveDirection()
     return ["up", "right", "rightdown", "down", "left", "leftup"];
 }
 
+function clonePointsArray(array)
+{
+    for(var i=0;i<array.length;i++)
+    {
+        delete array[i].circle;
+    }
+    return JSON.parse(JSON.stringify(array));
+}
+function cloneOnePoint(point)
+{
+    var temp = point.circle;
+    point.circle='';
+    var obj = JSON.parse(JSON.stringify(point));
+    point.circle = temp;
+    return obj;
+}
 function cloneChessPoint(source, tag)
 {
     var destination = {};

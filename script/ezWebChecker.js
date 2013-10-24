@@ -83,7 +83,7 @@ var EzWebEvent = (function(){
     
     function receiveCheckWinEvent(arriveId)
     {
-        EzWebGame.replyCheck(isWin(arriveId));
+        EzWebGame.replyCheck(isWin(EzWebGame.getUserTurnOrder(arriveId)));
     }
     
     function someoneFinishGameEvent(user)
@@ -99,7 +99,14 @@ var EzWebEvent = (function(){
         {
             message += "#" + (i+1) + "\t\t" + rank[i].userName + "\n";
         }
-        showCheckMessage(message);
+        showCheckMessage(message, backToRoom);
+        
+        function backToRoom()
+        {
+            turnToRoomLayer();
+            roomInfoLayer.show();
+            roomPlayerLayer.show();
+        }
     }
     
     return {
